@@ -3,17 +3,18 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import Client, {Config} from 'shopify-buy'
+var ShopifyBuy = require('../node_modules/shopify-buy/dist/shopify-buy.umd.min.js')
 
 // const config = new Config({
 //   domain: 'ijjico.myshopify.com',
 //   storefrontAccessToken: 'bb500e2b8aadb0af601f7aa9e0cc7292'
 // })
-const config = new Config({
-  domain: 'ijji-store.myshopify.com',
-  storefrontAccessToken: '6913fc35300008e6bbd8b5bd714b86ac'
+
+var client = ShopifyBuy.buildClient({
+  accessToken: '6913fc35300008e6bbd8b5bd714b86ac',
+  appId: 6,
+  domain: 'ijji-store.myshopify.com'
 })
-const client = new Client(config)
 Object.defineProperty(Vue.prototype, '$client', { value: client })
 
 import cookie from 'js-cookie'

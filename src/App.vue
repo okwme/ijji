@@ -1,66 +1,48 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <router-view :products='products'></router-view>
+    <toolbar :cart='cart' :collections='collections'></toolbar>
+    <cart :cart='cart'></cart>
+    <router-view :products='products' :collections='collections' :cart='cart'></router-view>
+    <bottom :collections='collections'></bottom>
   </div>
 </template>
 
 <script>
+import Cart from './components/Cart'
+import Bottom from './components/Bottom'
+import Toolbar from './components/Toolbar'
 export default {
   name: 'app',
   data () {
     return {
+      cart: {},
       products: [],
-      collections: [],
-      makingCart: false
+      collections: []
     }
+  },
+  components: {
+    Cart,
+    Bottom,
+    Toolbar
   },
   computed: {
-    cart () {
-      return this.$cookie.get('cart')
-    }
   },
-  watch: {
-    cart () {
-      if (!this.cart && !this.makingCart) {
-        this.makeCart()
-      }
-    }
-  },
-  mounted () {
-    console.log('mounted')
+  created () {
     this.$client.fetchAllProducts().then((products) => {
-      console.log(products)
       this.products = products
     })
-    this.$client.fetchAllCollectionsWithProducts().then((collections) => {
-      console.log(collections)
+    this.$client.fetchAllCollections().then((collections) => {
       this.collections = collections
     })
-    if (!this.cart) {
-      this.makingCart = true
-      this.makeCart()
-    }
+    this.$client.fetchRecentCart().then((cart) => {
+      this.cart = cart
+    })
   },
   methods: {
-    makeCart () {
-      this.$client.createCheckout().then((checkout) => {
-        console.log(checkout)
-        // this.makingCart = false
-        // this.cart = checkout
-      })
-    }
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>
