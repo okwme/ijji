@@ -1,9 +1,9 @@
 <template>
   <div id="app">
-    <toolbar :cart='cart' :collections='collections'></toolbar>
     <cart :cart='cart'></cart>
+    <toolbar :cart='cart' :collections='collections' :product-collections='productCollections'></toolbar>
     <router-view :products='products' :collections='collections' :cart='cart'></router-view>
-    <bottom :collections='collections'></bottom>
+    <bottom :collections='collections' :product-collections='productCollections'></bottom>
   </div>
 </template>
 
@@ -26,19 +26,45 @@ export default {
     Toolbar
   },
   computed: {
+    productCollections () {
+      return this.collections.filter((collection) => {
+        var prefix = collection.attrs.title.split('-')[0]
+        return !isNaN(parseFloat(prefix)) && isFinite(prefix)
+      }).sort((a, b) => {
+        return a.attrs.title.localeCompare(b.attrs.title)
+      })
+    }
   },
   created () {
     this.$client.fetchAllProducts().then((products) => {
       this.products = products
     })
-    this.$client.fetchAllCollections().then((collections) => {
-      this.collections = collections
-    })
     this.$client.fetchRecentCart().then((cart) => {
       this.cart = cart
     })
+    this.$client.fetchAllCollections().then((collections) => {
+      this.collections = collections
+      this.collections.forEach((collection) => {
+        this.$client.fetchQueryProducts({collection_id: collection.attrs.collection_id}).then(products => {
+          collection.products = products
+          this.addCollectionToProducts(products, collection)
+        })
+      })
+    })
   },
   methods: {
+    addCollectionToProducts (products, collection) {
+      products.forEach(product => {
+        var dataProduct = this.products.filter((p) => {
+          return p.attrs.product_id === product.attrs.product_id
+        }).pop()
+        if (dataProduct.collections) {
+          dataProduct.collections.push(collection)
+        } else {
+          dataProduct.collections = [collection]
+        }
+      })
+    }
   }
 }
 </script>

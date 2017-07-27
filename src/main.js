@@ -5,9 +5,10 @@ import App from './App'
 import router from './router'
 var ShopifyBuy = require('../node_modules/shopify-buy/dist/shopify-buy.umd.min.js')
 
-// const config = new Config({
-//   domain: 'ijjico.myshopify.com',
-//   storefrontAccessToken: 'bb500e2b8aadb0af601f7aa9e0cc7292'
+// var client = ShopifyBuy.buildClient({
+//   accessToken: 'bb500e2b8aadb0af601f7aa9e0cc7292',
+//   appId: 6,
+//   domain: 'ijjico.myshopify.com'
 // })
 
 var client = ShopifyBuy.buildClient({
@@ -16,9 +17,6 @@ var client = ShopifyBuy.buildClient({
   domain: 'ijji-store.myshopify.com'
 })
 Object.defineProperty(Vue.prototype, '$client', { value: client })
-
-import cookie from 'js-cookie'
-Object.defineProperty(Vue.prototype, '$cookie', { value: cookie })
 
 Vue.config.productionTip = false
 
