@@ -3,7 +3,8 @@
     <router-link to="/"><img :src='logo'></router-link>
     <div class='collections'>
       <router-link to="/collections/all">All</router-link>
-      <router-link v-for='collection in productCollections' :to="'/collections/' + collectionTitle(collection.attrs.title)">{{collectionTitle(collection.attrs.title)}}</router-link>
+      <router-link
+       :key='collection.attrs.title' v-for='collection in productCollections' :to="'/collections/' + $parent.collectionTitle(collection.attrs.title)">{{$parent.collectionTitle(collection.attrs.title)}}</router-link>
       <a href='#' @click.prevent='showCart()'>Cart {{items ? '(' + items.length + ')' : ''}}</a>
 
     </div>
@@ -34,11 +35,6 @@ export default {
     }
   },
   methods: {
-    collectionTitle (title) {
-      var chunk = title.split('-')
-      chunk.shift()
-      return chunk.join('-')
-    },
     showCart () {
       console.log('show cart')
     }

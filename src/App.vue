@@ -46,13 +46,18 @@ export default {
       this.collections = collections
       this.collections.forEach((collection) => {
         this.$client.fetchQueryProducts({collection_id: collection.attrs.collection_id}).then(products => {
-          collection.products = products
+          collection.attrs.products = products
           this.addCollectionToProducts(products, collection)
         })
       })
     })
   },
   methods: {
+    collectionTitle (title) {
+      var chunk = title.split('-')
+      chunk.shift()
+      return chunk.join('-')
+    },
     isNumber (string) {
       return !isNaN(parseFloat(string)) && isFinite(string)
     },
@@ -61,10 +66,10 @@ export default {
         var dataProduct = this.products.filter((p) => {
           return p.attrs.product_id === product.attrs.product_id
         }).pop()
-        if (dataProduct.collections) {
-          dataProduct.collections.push(collection)
+        if (dataProduct.attrs.collections) {
+          dataProduct.attrs.collections.push(collection)
         } else {
-          dataProduct.collections = [collection]
+          dataProduct.attrs.collections = [collection]
         }
       })
     }

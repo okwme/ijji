@@ -3,7 +3,7 @@
     <div v-html='banner && banner.attrs.body_html'></div>
 
     <div class='collections'>
-      <router-link v-for='collection in productCollections' :to="'/collections/' + collectionTitle(collection.attrs.title)">{{collectionTitle(collection.attrs.title)}}</router-link>
+      <router-link  :key='collection.attrs.title' v-for='collection in productCollections' :to="'/collections/' + $parent.collectionTitle(collection.attrs.title)">{{$parent.collectionTitle(collection.attrs.title)}}</router-link>
     </div>
     <div class='links' v-html='social && social.attrs.body_html'></div>
     <div class='mailchimp' v-html='mailchimp && mailchimp.attrs.body_html'></div>
@@ -35,13 +35,6 @@ export default {
       return this.collections && this.collections.filter((collection) => {
         return collection.attrs.title === 'Mailchimp'
       }).pop()
-    }
-  },
-  methods: {
-    collectionTitle (title) {
-      var chunk = title.split('-')
-      chunk.shift()
-      return chunk.join('-')
     }
   },
   props: {
