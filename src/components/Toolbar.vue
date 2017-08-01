@@ -3,7 +3,7 @@
     <router-link to="/"><img :src='logo'></router-link>
     <div class='collections'>
       <router-link to="/collections/all">All</router-link>
-      <router-link v-for='collection in productCollections' :to="'/collections/' + collectionTitle(collection.attrs.title)">{{collectionTitle(collection.attrs.title)}}</router-link>
+      <router-link v-for='collection in productCollections' :to="'/collections/' + collectionTitle(collection.attrs.title.value)">{{collectionTitle(collection.attrs.title.value)}}</router-link>
       <a href='#' @click.prevent='showCart()'>Cart {{items ? '(' + items.length + ')' : ''}}</a>
 
     </div>

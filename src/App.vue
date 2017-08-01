@@ -28,10 +28,10 @@ export default {
   computed: {
     productCollections () {
       return this.collections.filter((collection) => {
-        var prefix = collection.attrs.title.split('-')[0]
+        var prefix = collection.attrs.title.value.split('-')[0]
         return this.isNumber(prefix)
       }).sort((a, b) => {
-        return a.attrs.title.localeCompare(b.attrs.title)
+        return a.attrs.title.value.localeCompare(b.attrs.title.value)
       })
     }
   },
@@ -39,17 +39,23 @@ export default {
     this.$client.fetchAllProducts().then((products) => {
       this.products = products
     })
-    this.$client.fetchRecentCart().then((cart) => {
-      this.cart = cart
+    // this.$client.fetchRecentCart().then((cart) => {
+    //   this.cart = cart
+    // })
+    this.$client.createCheckout().then((checkout) => {
+      // Do something with the checkout
+      console.log(checkout)
+      this.cart = checkout
     })
-    this.$client.fetchAllCollections().then((collections) => {
+
+    this.$client.fetchAllCollectionsWithProducts().then((collections) => {
       this.collections = collections
-      this.collections.forEach((collection) => {
-        this.$client.fetchQueryProducts({collection_id: collection.attrs.collection_id}).then(products => {
-          collection.products = products
-          this.addCollectionToProducts(products, collection)
-        })
-      })
+      // this.collections.forEach((collection) => {
+      //   this.$client.fetchQueryProducts({collection_id: collection.attrs.collection_id}).then(products => {
+      //     collection.products = products
+      //     this.addCollectionToProducts(products, collection)
+      //   })
+      // })
     })
   },
   methods: {
