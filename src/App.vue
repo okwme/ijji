@@ -29,7 +29,7 @@ export default {
     productCollections () {
       return this.collections.filter((collection) => {
         var prefix = collection.attrs.title.split('-')[0]
-        return !isNaN(parseFloat(prefix)) && isFinite(prefix)
+        return this.isNumber(prefix)
       }).sort((a, b) => {
         return a.attrs.title.localeCompare(b.attrs.title)
       })
@@ -53,6 +53,9 @@ export default {
     })
   },
   methods: {
+    isNumber (string) {
+      return !isNaN(parseFloat(string)) && isFinite(string)
+    },
     addCollectionToProducts (products, collection) {
       products.forEach(product => {
         var dataProduct = this.products.filter((p) => {
