@@ -17,7 +17,8 @@ export default {
     return {
       cart: {},
       products: [],
-      collections: []
+      collections: [],
+      window: window.innerWidth
     }
   },
   components: {
@@ -36,23 +37,30 @@ export default {
     }
   },
   created () {
+    window.onresize = this.$debounce(this.resize, 200)
+
     this.$client.fetchAllProducts().then((products) => {
-      this.products = products
+      this.products.push(...products)
     })
     this.$client.fetchRecentCart().then((cart) => {
       this.cart = cart
     })
     this.$client.fetchAllCollections().then((collections) => {
-      this.collections = collections
-      this.collections.forEach((collection) => {
+      this.collections.push(...collections)
+      this.collections.forEach((collection, i) => {
         this.$client.fetchQueryProducts({collection_id: collection.attrs.collection_id}).then(products => {
           collection.attrs.products = products
+          this.collections.splice(i, 1, collection)
           this.addCollectionToProducts(products, collection)
         })
       })
     })
   },
   methods: {
+    resize (e) {
+      console.log('resize')
+      this.window = window.innerWidth
+    },
     collectionTitle (title) {
       var chunk = title.split('-')
       chunk.shift()
@@ -63,20 +71,22 @@ export default {
     },
     addCollectionToProducts (products, collection) {
       products.forEach(product => {
-        var dataProduct = this.products.filter((p) => {
+        var productIndex = this.products.findIndex((p) => {
           return p.attrs.product_id === product.attrs.product_id
-        }).pop()
-        if (dataProduct.attrs.collections) {
-          dataProduct.attrs.collections.push(collection)
+        })
+        product = productIndex > -1 && this.products[productIndex]
+        if (product.attrs.collections) {
+          product.attrs.collections.push(collection)
         } else {
-          dataProduct.attrs.collections = [collection]
+          product.attrs.collections = [collection]
         }
+        this.products.splice(productIndex, 1, product)
       })
     }
   }
 }
 </script>
 
-<style>
-
+<style  lang='scss'>
+  @import "sass/grid";
 </style>

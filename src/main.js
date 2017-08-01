@@ -18,6 +18,9 @@ var client = ShopifyBuy.buildClient({
 })
 Object.defineProperty(Vue.prototype, '$client', { value: client })
 
+var debounce = require('debounce')
+Object.defineProperty(Vue.prototype, '$debounce', { value: debounce })
+
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

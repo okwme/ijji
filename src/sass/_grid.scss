@@ -1,0 +1,126 @@
+$max-width: 2600px;
+$tablet-max-width: 1024px;
+$tablet-min-width: 768px;
+$mobile-max-width: 480px;
+$padding: 12;
+
+/* GRID */
+/* GRID */
+/* GRID */
+html, body {
+  padding:0;
+  margin:0;
+}
+*, *:after, *:before {
+  box-sizing: border-box;
+}
+.grid{
+  width:100%;
+  max-width: $max-width;
+  min-width:320px;
+  margin-left:auto;
+  margin-right:auto;
+  padding: 0px #{$padding/2}px;
+}
+[class*='col-'] {
+  float: left;
+  width:100%;
+  min-height:1px;
+  padding:0px #{$padding / 2}px;
+  img {
+    max-width: 100%;
+  }
+}
+[class*='col-']:last-of-type {
+
+}
+[class*='col-']:first-of-type {
+
+}
+.grid:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.col-1-1{
+  width:100%;
+}
+@for $i from 1 through 12{
+  @for $j from 1 through 12{
+    @if ($j < $i) {
+      .col-#{$j}-#{$i}{
+        $foo : $j / $i;
+        $foo : $foo * 100;
+        width :  #{$foo+"%"};
+      }
+    } 
+  }
+}
+@media (-webkit-min-device-pixel-ratio: 1) {
+  body {
+    background-color: blue;
+  }
+}
+@media (-webkit-min-device-pixel-ratio: 2) {
+  body {
+    background-color: green;
+  }
+}
+@media (-webkit-min-device-pixel-ratio: 3) {
+  body {
+    background-color: red;
+  }
+}
+
+
+/* tablet */
+/* tablet */
+/* tablet */
+@media only screen and (max-width : $tablet-max-width) {
+  .tab-1-1{
+    width:100%;
+  }
+  @for $i from 1 through 12{
+    @for $j from 1 through 12{
+      @if ($j < $i) {
+        .tab-#{$j}-#{$i}{
+          $foo : $j / $i;
+          $foo : $foo * 100;
+          width :  #{$foo+"%"};
+        }
+      } 
+    }
+  }
+}
+@media only screen and (min-width : $tablet-min-width ) and (max-width : $tablet-max-width) and (orientation : portrait) {
+
+}
+@media only screen and (min-width : $tablet-min-width ) and (max-width : $tablet-max-width) and (orientation : landscape) {
+
+}
+
+/* mobile */
+/* mobile */
+/* mobile */
+@media only screen and (min-width : 0px) and (max-width : $mobile-max-width) {
+  .mob-1-1{
+    width:100%;
+  }
+  @for $i from 1 through 12{
+    @for $j from 1 through 12{
+      @if ($j < $i) {
+        .mob-#{$j}-#{$i}{
+          $foo : $j / $i;
+          $foo : $foo * 100;
+          width :  #{$foo+"%"};
+        }
+      } 
+    }
+  }
+}
+@media only screen and (min-width : 0px) and (max-width : $mobile-max-width) and (orientation : portrait) {
+
+}
+@media only screen and (min-width : 0px) and (max-width : $mobile-max-width) and (orientation : landscape) {
+
+}
