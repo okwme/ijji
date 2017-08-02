@@ -1,12 +1,13 @@
 <template>
-  <div>
-    <router-link to="/"><img :src='logo'></router-link>
-    <div class='collections'>
-      <router-link to="/collections/all">All</router-link>
-      <router-link
-       :key='collection.attrs.title' v-for='collection in productCollections' :to="'/collections/' + $parent.collectionTitle(collection.attrs.title)">{{$parent.collectionTitle(collection.attrs.title)}}</router-link>
-      <a href='#' @click.prevent='showCart()'>Cart {{items ? '(' + items.length + ')' : ''}}</a>
-
+  <div id='toolbar'>
+    <div class='grid'>
+      <router-link to="/" id='index'><img :src='logo'></router-link>
+      <div class='collections'>
+        <router-link to="/collections/all">All</router-link>
+        <router-link
+         :key='collection.attrs.title' v-for='collection in productCollections' :to="'/collections/' + $parent.collectionTitle(collection.attrs.title)">{{$parent.collectionTitle(collection.attrs.title)}}</router-link>
+        <a href='#' @click.prevent='clickCart'>Cart {{items ? '(' + items.length + ')' : ''}}</a>
+      </div>
     </div>
   </div>
 </template>
@@ -35,8 +36,9 @@ export default {
     }
   },
   methods: {
-    showCart () {
-      console.log('show cart')
+    clickCart (e) {
+      e.stopPropagation()
+      this.$emit('click-cart')
     }
   },
   props: {
@@ -56,5 +58,18 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="scss" scoped>
+  #toolbar {
+    position:absolute;
+    width:100%;
+    left:0px;
+    top:0px;
+    margin-top:45px;
+    #index {
+      float: left;
+    }
+    .collections {
+      float:right;
+    }
+  }
 </style>

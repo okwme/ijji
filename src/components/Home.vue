@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <img :src='landingImg'>
-  </div>
+  <div id='home' :style='bg'></div>
 </template>
 
 <script>
@@ -21,6 +19,11 @@ export default {
     }
   },
   computed: {
+    bg () {
+      return {
+        'background-image': 'url(\'' + this.landingImg + '\')'
+      }
+    },
     landing () {
       return this.collections.filter((collection) => {
         return collection.attrs.title === 'Landing'
@@ -34,4 +37,10 @@ export default {
 </script>
 
 <style lang="css" scoped>
+  #home {
+    min-height:100vh;
+    background-size: cover;
+    background-position:center center;
+    background-repeat:no-repeat;
+  }
 </style>

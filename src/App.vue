@@ -1,9 +1,12 @@
 <template>
   <div id="app">
-    <cart :cart='cart'></cart>
-    <toolbar :cart='cart' :collections='collections' :product-collections='productCollections'></toolbar>
-    <router-view :products='products' :collections='collections' :cart='cart'></router-view>
-    <bottom :collections='collections' :product-collections='productCollections'></bottom>
+    <cart @click-cart='clickCart' :cart='cart' :visible='cartVisible'></cart>
+    <div class='app' :class='{cartVisible:cartVisible}' @click='cartVisible = false'>
+      <toolbar @click-cart='clickCart' :cart='cart' :collections='collections' :product-collections='productCollections'></toolbar>
+      <router-view :products='products' :collections='collections' :cart='cart'></router-view>
+      <bottom :collections='collections' :product-collections='productCollections'></bottom>
+      <div id='maxWidth'></div><div id='tabletWidth'></div><div id='mobileWidth'></div>
+    </div>
   </div>
 </template>
 
@@ -16,9 +19,15 @@ export default {
   data () {
     return {
       cart: {},
+      cartVisible: false,
       products: [],
       collections: [],
-      window: window.innerWidth
+      window: window.innerWidth,
+      imageRatio: 1.5,
+      padding: 12,
+      maxWidth: 1200,
+      tabletWidth: 1020,
+      mobileWidth: 480
     }
   },
   components: {
@@ -56,10 +65,24 @@ export default {
       })
     })
   },
+  mounted () {
+    this.setBreakPoints()
+  },
   methods: {
+    clickCart () {
+      this.cartVisible = !this.cartVisible
+    },
     resize (e) {
-      console.log('resize')
       this.window = window.innerWidth
+    },
+    setBreakPoints () {
+      var ids = ['maxWidth', 'tabletWidth', 'mobileWidth']
+      for (var i = 0; i < ids.length; i++) {
+        var id = ids[i]
+        var el = document.getElementById(id)
+        var style = window.getComputedStyle(el)
+        this[id] = parseInt(style.getPropertyValue('max-width').slice(0, -2))
+      }
     },
     collectionTitle (title) {
       var chunk = title.split('-')
@@ -89,4 +112,12 @@ export default {
 
 <style  lang='scss'>
   @import "sass/grid";
+  .app{
+    // position: relative;
+    // right:0px;
+    // transition: right ease 500ms;
+    &.cartVisible {
+      // right:320px;
+    }
+  }
 </style>
