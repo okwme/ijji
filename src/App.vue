@@ -134,23 +134,18 @@ export default {
 </script>
 
 <style  lang='scss'>
+  @import "sass/global";
   @import "sass/grid";
+  
   body.no-scroll{
     overflow: hidden;
   }
   .app{
-    // position: relative;
-    // right:0px;
-    // transition: right ease 500ms;
+    position: relative;
+    right:0px;
+    transition: right ease 500ms;
     &.cartVisible {
-      // right:320px;
+      right:320px;
     }
-  }
-  .clicker {
-    cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
   }
 </style>

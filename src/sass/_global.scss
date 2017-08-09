@@ -1,0 +1,56 @@
+$black: #111;
+@font-face {
+  font-family: 'NeueHaasGroteskText';
+  src: url('./assets/NHaasGroteskTXPro-75Bd.eot');
+  src: url('./assets/NHaasGroteskTXPro-75Bd.eot?#iefix') format('embedded-opentype'),
+    url('./assets/NHaasGroteskTXPro-75Bd.woff') format('woff'),
+    url('./assets/NHaasGroteskTXPro-75Bd.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'NeueHaasGroteskText';
+  src: url('./assets/NHaasGroteskTXPro-55Rg.eot');
+  src: url('./assets/NHaasGroteskTXPro-55Rg.eot?#iefix') format('embedded-opentype'),
+    url('./assets/NHaasGroteskTXPro-55Rg.woff') format('woff'),
+    url('./assets/NHaasGroteskTXPro-55Rg.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'NeueHaasGroteskText';
+  src: url('./assets/NHaasGroteskTXPro-65Md.eot');
+  src: url('./assets/NHaasGroteskTXPro-65Md.eot?#iefix') format('embedded-opentype'),
+    url('./assets/NHaasGroteskTXPro-65Md.woff') format('woff'),
+    url('./assets/NHaasGroteskTXPro-65Md.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+
+*, body { 
+  font-family: NeueHaasGroteskText, Helvetica, sans-serif; 
+  color: $black; 
+  line-height: 1.25;
+  font-size: 12px;
+}
+h1 {
+  font-size: 24px;
+}
+a, a:active, a:hover, a:visited {
+  text-transform: uppercase;
+  text-decoration: none;
+  color: $black;
+}
+a:hover {
+  font-weight: bold;
+}
+.clicker {
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}

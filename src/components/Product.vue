@@ -33,12 +33,12 @@
       </div>
       <div >
         <span>Quantity:</span>
-        <span class='clicker' @click='quantity > 1 && quantity--'>-</span>
+        <span class='clicker' @click='quantity > 1 && increaseQuantity(-1)'>-</span>
         <span v-html='quantity'></span>
-        <span class='clicker' @click='quantity < 4 && quantity++'>+</span>
+        <span class='clicker' @click='quantity < 4 && increaseQuantity(1)'>+</span>
       </div>
       <div >
-        <span class='clicker' @click='addToCart()'>Add To Cart</span>
+        <span class='clicker' @click='addToCart()' v-html='buyText'></span>
       </div>
     </div>
     <div class='col-1-1'>
@@ -57,7 +57,7 @@ export default {
       imageIndex: 0,
       imgs: [],
       variantKey: 0,
-      quantity: 1
+      staticQuantity: 1
     }
   },
   mounted () {
@@ -83,6 +83,22 @@ export default {
     }
   },
   computed: {
+    buyText () {
+      return !this.inCart ? 'Add To Cart' : 'Remove From Cart'
+    },
+    variant () {
+      return this.product && this.product.attrs.variants.filter((variant, index) => {
+        return index === this.variantKey
+      }).pop()
+    },
+    inCart () {
+      return this.variant && this.cart.attrs && this.cart.attrs.line_items.filter(item => {
+        return item.variant_id === this.variant.id
+      }).pop()
+    },
+    quantity () {
+      return this.inCart && this.inCart.quantity || this.staticQuantity
+    },
     product () {
       return this.products.filter((p) => {
         return p.attrs.product_id === parseInt(this.id) || p.attrs.handle === this.id
@@ -109,11 +125,25 @@ export default {
     }
   },
   methods: {
+    increaseQuantity (amount) {
+      if (this.inCart) {
+        this.cart.updateLineItem(this.inCart['shopify-buy-uuid'], (this.quantity + amount))
+      } else {
+        this.staticQuantity += amount
+      }
+    },
     addToCart () {
-      var buy = {variant: this.product.variants[this.variantKey], quantity: this.quantity}
-      this.cart.createLineItemsFromVariants(buy).then((cart) => {
-        this.$emit('update-cart', cart)
-      })
+      if (this.inCart) {
+        this.cart.removeLineItem(this.inCart['shopify-buy-uuid']).then((cart) => {
+          this.$emit('update-cart', cart)
+        })
+      } else {
+        var buy = {variant: this.product.variants[this.variantKey], quantity: this.quantity}
+        this.cart.createLineItemsFromVariants(buy).then((cart) => {
+          this.$emit('update-cart', cart)
+        })
+      }
+      this.staticQuantity = 1
     },
     varSize (variant) {
       return variant.option_values.filter((option) => {
