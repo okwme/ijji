@@ -6,7 +6,7 @@
         <router-link to="/collections/all">All</router-link>
         <router-link
          :key='collection.attrs.title' v-for='collection in productCollections' :to="'/collections/' + $parent.collectionTitle(collection.attrs.title)">{{$parent.collectionTitle(collection.attrs.title)}}</router-link>
-        <a href='#' @click.prevent='clickCart'>Cart {{items ? '(' + items.length + ')' : ''}}</a>
+        <a href='#' @click.prevent='clickCart'>Cart {{items ? '(' + items + ')' : ''}}</a>
       </div>
     </div>
   </div>
@@ -32,7 +32,16 @@ export default {
       return this.logoCollection && this.logoCollection.attrs.image.src
     },
     items () {
-      return this.cart && this.cart.attrs && this.cart.attrs.line_items
+      if (this.cart.attrs && this.cart.attrs.line_items.length) {
+        var count = 0
+        var items = this.cart.attrs.line_items
+        for (var i = 0; i < items.length; i++) {
+          count += items[i].quantity
+        }
+        return count
+      } else {
+        return 0
+      }
     }
   },
   methods: {

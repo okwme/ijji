@@ -1,9 +1,13 @@
 <template>
   <div id="app">
-    <cart @click-cart='clickCart' :cart='cart' :visible='cartVisible'></cart>
+    <cart 
+      @update-cart='updateCart'
+      @click-cart='clickCart' 
+      :cart='cart' 
+      :visible='cartVisible'></cart>
     <div class='app' :class='{cartVisible:cartVisible}' @click='cartVisible = false'>
       <toolbar @click-cart='clickCart' :cart='cart' :collections='collections' :product-collections='productCollections'></toolbar>
-      <router-view :products='products' :collections='collections' :cart='cart'></router-view>
+      <router-view @update-cart='updateCart' :products='products' :collections='collections' :cart='cart'></router-view>
       <bottom :collections='collections' :product-collections='productCollections'></bottom>
       <div id='maxWidth'></div><div id='tabletWidth'></div><div id='mobileWidth'></div>
     </div>
@@ -35,6 +39,15 @@ export default {
     Bottom,
     Toolbar
   },
+  watch: {
+    cartVisible () {
+      if (this.cartVisible) {
+        document.getElementById('body').classList.add('no-scroll')
+      } else {
+        document.getElementById('body').classList.remove('no-scroll')
+      }
+    }
+  },
   computed: {
     productCollections () {
       return this.collections.filter((collection) => {
@@ -46,6 +59,7 @@ export default {
     }
   },
   created () {
+    document.onkeydown = this.keyPress
     window.onresize = this.$debounce(this.resize, 200)
 
     this.$client.fetchAllProducts().then((products) => {
@@ -69,6 +83,15 @@ export default {
     this.setBreakPoints()
   },
   methods: {
+    keyPress (e) {
+      e = e || window.event
+      if (e.keyCode === 27) {
+        this.cartVisible = false
+      }
+    },
+    updateCart (cart) {
+      this.cart = cart
+    },
     clickCart () {
       this.cartVisible = !this.cartVisible
     },
@@ -112,6 +135,9 @@ export default {
 
 <style  lang='scss'>
   @import "sass/grid";
+  body.no-scroll{
+    overflow: hidden;
+  }
   .app{
     // position: relative;
     // right:0px;
@@ -119,5 +145,12 @@ export default {
     &.cartVisible {
       // right:320px;
     }
+  }
+  .clicker {
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 </style>

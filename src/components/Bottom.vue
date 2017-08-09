@@ -1,12 +1,23 @@
 <template>
   <div>
-    <div v-html='banner && banner.attrs.body_html'></div>
-
-    <div class='collections'>
-      <router-link  :key='collection.attrs.title' v-for='collection in productCollections' :to="'/collections/' + $parent.collectionTitle(collection.attrs.title)">{{$parent.collectionTitle(collection.attrs.title)}}</router-link>
+    <div class='banner grid' >
+      <div class='col-1-1' v-html='banner && banner.attrs.body_html'>
+      </div>
     </div>
-    <div class='links' v-html='social && social.attrs.body_html'></div>
-    <div class='mailchimp' v-html='mailchimp && mailchimp.attrs.body_html'></div>
+    <div class='grid'>
+      <div class='collections col-1-6'>
+        <div v-for='collection in productCollections'>
+          <router-link :to="'/collections/' + $parent.collectionTitle(collection.attrs.title)">{{$parent.collectionTitle(collection.attrs.title)}}</router-link>
+        </div>
+      </div>
+      <div class='links col-1-6'>
+        <div v-for='collection in navCollections'>
+          <router-link :to="'/collections/' + collection">{{collection}}</router-link>
+        </div>
+      </div>
+      <div class='links col-1-6' v-html='social && social.attrs.body_html'></div>
+      <div class='mailchimp col-5-12' v-html='mailchimp && mailchimp.attrs.body_html'></div>
+    </div>
   </div>
 </template>
 
@@ -21,6 +32,17 @@ export default {
     }
   },
   computed: {
+    navCollections () {
+      return ['About', 'Contact', 'Shipping', 'Returns']
+      // return this.collections && this.collections.filter((collection) => {
+      //   console.log(collection.attrs.title)
+      //   var found = names.findIndex((name) => {
+      //     return collection.attrs.title === name
+      //   })
+      //   console.log(found)
+      //   return found > -1
+      // })
+    },
     banner () {
       return this.collections && this.collections.filter((collection) => {
         return collection.attrs.title === 'Banner'
@@ -50,5 +72,12 @@ export default {
 }
 </script>
 
-<style lang="css" scoped>
+<style lang="scss" scoped>
+.banner {
+  margin-top:72px;
+  margin-bottom:37px;
+  text-align:center;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+}
 </style>

@@ -1,6 +1,9 @@
 <template>
   <div id='collections' class='grid'>
-    <div class='col-1-3 tab-1-2 mob-1-1'  v-for='product, i in products'>
+    <div v-if='!productsFiltered.length'>
+      More products coming soon!
+    </div>
+    <div class='col-1-3 tab-1-2 mob-1-1'  v-for='product, i in productsFiltered'>
       <router-link :to='"/product/" + product.attrs.handle'>
         <img :src='getImage(product)'>
         {{product.attrs.title}} - {{getPrice(product)}}
@@ -25,8 +28,8 @@ export default {
         return this.$parent.collectionTitle(c.attrs.title) === this.id
       })
     },
-    products () {
-      return this.currCollection.length && this.currCollection[0].attrs.products
+    productsFiltered () {
+      return this.id === 'all' ? this.products : this.currCollection.length && this.currCollection[0].attrs.products
     },
     imgSize () {
       var w = this.$parent.window > this.$parent.maxWidth ? this.$parent.maxWidth : this.$parent.window
@@ -56,6 +59,10 @@ export default {
     collections: {
       type: Array,
       default: []
+    },
+    products: {
+      type: Array,
+      default: []
     }
   }
 }
@@ -64,5 +71,6 @@ export default {
 <style lang="css" scoped>
 #collections {
   padding-top:168px;
+  min-height:100vh;
 }
 </style>
