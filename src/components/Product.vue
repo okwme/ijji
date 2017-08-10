@@ -1,24 +1,27 @@
 <template>
   <div id='product' class='grid'>
-    <div class='col-7-12'>
+    <div class='col-7-12 tab-2-3 mob-1-1'>
+      <div class='currentImage hide-on-desktop' :class='getClass(imageIndex)'>
+        <img :src='getImg(imageIndex)'>
+      </div>
       <div class='imageOptions'>
         <div v-for='(image, index) in imgs' :style='colorBorder' :class='{current: index === imageIndex}'>
-          <a :href='image.src' @click.prevent='imageIndex = index'>
+          <a :href='image.src' @click.prevent.stop='imageIndex = index'>
             <img :src='getImg(index)'>
           </a>
         </div>
       </div>
-      <div class='currentImage' :class='getClass(imageIndex)'>
+      <div class='currentImage hide-on-tablet' :class='getClass(imageIndex)'>
         <img :src='getImg(imageIndex)'>
       </div>
     </div>
-    <div class='col-1-12'></div>
-    <div class='col-1-3'>
-      <div>{{product && product.attrs.title}} – {{product && product.attrs.variants[0].formatted_price}}</div>
+    <div class='col-1-12 tab-0 mob-0'></div>
+    <div class='col-1-3 tab-1-3 mob-1-1 product-stats' >
+      <h1>{{product && product.attrs.title}} – {{product && product.attrs.variants[0].formatted_price}}</h1>
       <div v-if='tags'>
-        <span>Color:</span>
+        <span class='var-label'>Color:</span>
         <span v-for='tag in tags'>
-          <router-link v-for='link in tag' :key='link.id' :to='"/product/" + link.handle'>
+          <router-link @click.native.stop="" v-for='link in tag' :key='link.id' :to='"/product/" + link.handle'>
             <div class='colorSwatch clicker' :class='isSelected(link)' :style='border(link.color)'>
               <div :style='bg(link.color)'></div>
             </div>
@@ -26,19 +29,19 @@
         </span>
       </div>
       <div v-if='product && product.attrs.variants.length'>
-        <span>Size:</span>
+        <span class='var-label'>Size:</span>
         <span v-for='variant, index in product.attrs.variants'>
-          <span class='sizeVariant clicker' :class='{selected: index === variantKey}' @click='variantKey = index' v-html='varSize(variant)'></span>
+          <span class='sizeVariant clicker' :class='{selected: index === variantKey}' @click.stop='variantKey = index' v-html='varSize(variant)'></span>
         </span>
       </div>
       <div >
-        <span>Quantity:</span>
-        <span class='clicker' @click='quantity > 1 && increaseQuantity(-1)'>-</span>
-        <span v-html='quantity'></span>
-        <span class='clicker' @click='quantity < 4 && increaseQuantity(1)'>+</span>
+        <span class='var-label'>Quantity:</span>
+        <span class='clicker quant' @click.stop='quantity > 1 && increaseQuantity(-1)'>-</span>
+        <span class='quant' v-html='quantity'></span>
+        <span class='clicker quant' @click.stop='quantity < 4 && increaseQuantity(1)'>+</span>
       </div>
       <div >
-        <span class='clicker' @click='addToCart()' v-html='buyText'></span>
+        <span class='clicker' @click.stop='addToCart' v-html='buyText'></span>
       </div>
     </div>
     <div class='col-1-1'>
@@ -70,11 +73,10 @@ export default {
       }
     },
     product () {
-      this.imageIndex = 0
-      this.imgs.splice(0, this.imgs.length)
-      this.$nextTick(() => {
-        this.setImgs()
-      })
+      if (this.product && !isNaN(this.id)) {
+        this.$router.push('/product/' + this.product.attrs.handle)
+      }
+      this.setImgs()
     },
     imgs () {
       if (this.imgs.length) {
@@ -132,7 +134,8 @@ export default {
         this.staticQuantity += amount
       }
     },
-    addToCart () {
+    addToCart (e) {
+      e.stopPropagation()
       if (this.inCart) {
         this.cart.removeLineItem(this.inCart['shopify-buy-uuid']).then((cart) => {
           this.$emit('update-cart', cart)
@@ -141,6 +144,7 @@ export default {
         var buy = {variant: this.product.variants[this.variantKey], quantity: this.quantity}
         this.cart.createLineItemsFromVariants(buy).then((cart) => {
           this.$emit('update-cart', cart)
+          this.$emit('click-cart', true)
         })
       }
       this.staticQuantity = 1
@@ -152,15 +156,21 @@ export default {
     },
     setImgs () {
       if (this.product && this.product.attrs.images) {
-        var images = this.product.attrs.images
-        for (var i = 0; i < images.length; i++) {
-          var img = images[i]
-          this.imgs.push({
-            src: img.src,
-            loaded: false,
-            loading: false
-          })
-        }
+        this.imageIndex = 0
+        this.imgs.splice(0, this.imgs.length)
+        this.$nextTick(function () {
+          this.imageIndex = 0
+          this.imgs.splice(0, this.imgs.length)
+          var images = this.product.attrs.images
+          for (var i = 0; i < images.length; i++) {
+            var img = images[i]
+            this.imgs.push({
+              src: img.src,
+              loaded: false,
+              loading: false
+            })
+          }
+        })
       }
     },
     startLoading () {
@@ -246,6 +256,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  @import "../sass/vars";
 
 #product {
   padding-top:168px;
@@ -299,6 +310,7 @@ export default {
   margin-right: 15px;
   display:inline-block;
   transition: border ease 500ms;
+  margin-bottom: -6px;
   &:not(:hover):not(.selected) {
     border:1px solid transparent !important;
   }
@@ -308,11 +320,46 @@ export default {
     margin:3px;
   }
 }
+.product-stats {
+  > div {
+    margin-bottom: $padding+px;
+    .var-label {
+      margin-right: 18px;
+    }
+    .quant {
+      margin-right: 12px;
+      padding:3px;
+      &.clicker {
+        display: inline-block;
+        width: 20px;
+        text-align: center;
+      }
+    }
+  }
+}
 .sizeVariant {
   margin: 0px 15px;
+  padding:3px;
   &.selected {
     color: white;
     background-color: black;
   }
+}
+@media only screen and (max-width : $tablet-max-width) {
+
+.currentImage {
+  margin-right:18px;
+}
+.imageOptions {
+  float:none;
+  display: block;
+  width: 100%;
+  > div {
+    width:50px;
+    height:50px;
+    display: inline-block;
+  }
+}
+
 }
 </style>

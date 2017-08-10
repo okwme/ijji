@@ -3,23 +3,37 @@
     <h1>Cart ({{count}})</h1>
     <a id='closeCart' href='#' @click.prevent='clickCart'>x</a>
     <div v-if='cart.attrs'>
-      <div v-for='item in cart.attrs.line_items'>
-        <div class='clicker' @click='removeItem(item)'>X</div>
-          <img :src='getSmall(item)'>
-          <div class='item-title'>{{item.title}}</div>
-          <div class='item-variant-title'>{{item.variant_title}}</div>
-          <div class='item-price'>${{item.price}}</div>
-          <div class='item-quantity'>
-            <a href='#' @click.prevent='quantity(item, -1)'>-</a>
-            <span>{{item.quantity}}</span>
-            <a href='#' @click.prevent='quantity(item, 1)'>+</a>
+      <div class='line-item' v-for='item in cart.attrs.line_items'>
+          <!--<div class='clicker' @click='removeItem(item)'>X</div>--> 
+          <div class='w-img'>
+            <router-link :to="'/product/' + item.product_id">
+              <img :src='getSmall(item.image.src)'>
+            </router-link>
           </div>
+          <div class='w-info'>
+            <router-link :to="'/product/' + item.product_id">
+              <div class='item-title'>{{item.title}}</div>
+            </router-link>
+            <div class='item-variant-title'>{{item.variant_title}}</div>
+            <div class='item-price'>${{item.price}}</div>
+          </div>
+          <div class='w-inv'>
+            <div class='item-quantity'>
+              <span class='clicker' @click='quantity(item, -1)'>-</span>
+              <span>{{item.quantity}}</span>
+              <span class='clicker' @click='quantity(item, 1)'>+</span>
+            </div>
+          </div>
+          <div class='clear-both'></div>
       </div>
-      <div>
+      <div class='mb6'>
+        <div class='mb6'>Special Instructions / Comments</div>
         <textarea :model='specialInstructions'></textarea>
       </div>
-      <div>
-      ${{total}}
+      <div class='mb6'>
+        <div class='left'>Total</div>
+        <div class='right'>${{total}}</div>
+        <div class='clear-both'></div>
       </div>
       <button @click='checkout'>Checkout</button>
     </div>
@@ -70,21 +84,25 @@ export default {
   },
   methods: {
     quantity (item, amount) {
+      if (item.quantity > 3 && amount > 0) return
       this.cart.updateLineItem(item['shopify-buy-uuid'], (item.quantity + amount))
     },
     checkout () {
 
     },
-    getSmall (item) {
-      var src = false
-      for (var i = 0; i < item.image_variants.length; i++) {
-        var img = item.image_variants[i]
-        var w = img.dimension.split('x')[0]
-        if (parseInt(w) <= 100) {
-          src = img.src
-        }
-      }
-      return src
+    getSmall (src) {
+      return src.replace('.jpg', '_small.jpg')
+      // console.log(item)
+      // return item.image_variants[2].src
+      // var src = false
+      // for (var i = 0; i < variants.length; i++) {
+      //   var img = variants[i]
+      //   var w = img.dimension.split('x')[0]
+      //   if (parseInt(w) <= 100) {
+      //     src = img.src
+      //   }
+      // }
+      // return src
     },
     clickCart () {
       this.$emit('click-cart')
@@ -99,6 +117,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  @import "../sass/vars";
+
 #cart {
   background-color: white;
   z-index:2;
@@ -111,6 +131,7 @@ export default {
   width: 320px;
   right:-320px;
   transition: right ease 500ms;
+  padding: $padding+px;
   &.open {
     right:0px;
   }
@@ -118,6 +139,39 @@ export default {
     position:absolute;
     top: 20px;
     right:20px;
+  }
+  .line-item {
+    > div {
+      display: inline-block;
+      vertical-align: top;
+      div {
+        margin-bottom: $padding/3+px;
+      }
+    }
+    .w-inv {
+      float:right;
+    }
+    img {
+      max-width:50px;
+      margin-right: $padding/2+px;
+      margin-bottom: $padding+px;
+    }
+  }
+  .item-quantity > *{
+      margin-right: 12px;
+      padding:3px;
+      a {
+        display: inline-block;
+        width: 20px;
+        text-align: center;
+        text-transform: lowercase;
+      }
+    }
+  textarea {
+    width:100%;
+    min-height:100px;
+    max-height:200px;
+    max-width:100%;
   }
 }
 </style>

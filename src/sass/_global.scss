@@ -38,6 +38,7 @@ $black: #111;
 }
 h1 {
   font-size: 24px;
+  font-weight: normal;
 }
 a, a:active, a:hover, a:visited {
   text-transform: uppercase;
@@ -53,4 +54,28 @@ a:hover {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+.left {
+  float: left;
+}
+.right {
+  float: right;
+}
+.clear-both {
+  clear: both;
+}
+.hide-on-desktop {
+  display: none;
+}
+.mb6 {
+  margin-bottom:6px;
+}
+
+@media only screen and (max-width : $tablet-max-width) {
+  .hide-on-desktop {
+    display: inherit;
+  } 
+  .hide-on-tablet {
+    display: none;
+  }
 }

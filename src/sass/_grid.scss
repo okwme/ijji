@@ -1,10 +1,4 @@
-$max-width: 1020px;
-$tablet-max-width: 1019px;
-$tablet-min-width: 768px;
-$mobile-max-width: 480px;
-$padding: 18;
-$tablet-padding: 12;
-$mobile-padding: 12;
+
 
 /* GRID */
 /* GRID */
@@ -56,6 +50,9 @@ html, body {
 .col-1-1{
   width:100%;
 }
+.col-0{
+  display: none;
+}
 @for $i from 1 through 12{
   @for $j from 1 through 12{
     @if ($j < $i) {
@@ -80,6 +77,9 @@ html, body {
   }
   .tab-1-1{
     width:100%;
+  }
+  .tab-0{
+    display: none;
   }
   @for $i from 1 through 12{
     @for $j from 1 through 12{
@@ -112,6 +112,9 @@ html, body {
   }
   .mob-1-1{
     width:100%;
+  }
+  .mob-0{
+    display: none;
   }
   @for $i from 1 through 12{
     @for $j from 1 through 12{

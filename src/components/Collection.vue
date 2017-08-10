@@ -1,6 +1,6 @@
 <template>
   <div id='collections' class='grid'>
-    <div v-if='!productsFiltered.length'>
+    <div v-if='!productsFiltered || !productsFiltered.length'>
       More products coming soon!
     </div>
     <div class='col-1-3 tab-1-2 mob-1-1'  v-for='product, i in productsFiltered'>

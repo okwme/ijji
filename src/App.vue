@@ -7,7 +7,12 @@
       :visible='cartVisible'></cart>
     <div class='app' :class='{cartVisible:cartVisible}' @click='cartVisible = false'>
       <toolbar @click-cart='clickCart' :cart='cart' :collections='collections' :product-collections='productCollections'></toolbar>
-      <router-view @update-cart='updateCart' :products='products' :collections='collections' :cart='cart'></router-view>
+      <router-view 
+      @click-cart='clickCart'
+      @update-cart='updateCart' 
+      :products='products' 
+      :collections='collections' 
+      :cart='cart'></router-view>
       <bottom :collections='collections' :product-collections='productCollections'></bottom>
       <div id='maxWidth'></div><div id='tabletWidth'></div><div id='mobileWidth'></div>
     </div>
@@ -41,11 +46,11 @@ export default {
   },
   watch: {
     cartVisible () {
-      if (this.cartVisible) {
-        document.getElementById('body').classList.add('no-scroll')
-      } else {
-        document.getElementById('body').classList.remove('no-scroll')
-      }
+      // if (this.cartVisible) {
+      //   document.getElementById('body').classList.add('no-scroll')
+      // } else {
+      //   document.getElementById('body').classList.remove('no-scroll')
+      // }
     }
   },
   computed: {
@@ -92,8 +97,8 @@ export default {
     updateCart (cart) {
       this.cart = cart
     },
-    clickCart () {
-      this.cartVisible = !this.cartVisible
+    clickCart (show = !this.cartVisible) {
+      this.cartVisible = show
     },
     resize (e) {
       this.window = window.innerWidth
@@ -134,9 +139,10 @@ export default {
 </script>
 
 <style  lang='scss'>
+  @import "sass/vars";
   @import "sass/global";
   @import "sass/grid";
-  
+
   body.no-scroll{
     overflow: hidden;
   }

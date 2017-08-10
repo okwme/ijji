@@ -79,6 +79,9 @@ export default {
     }
     .collections {
       float:right;
+      a {
+        margin-right: 6px;
+      }
     }
   }
 </style>
