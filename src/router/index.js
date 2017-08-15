@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Home from '@/components/Home'
 import Collection from '@/components/Collection'
 import Product from '@/components/Product'
+import Page from '@/components/Page'
 
 Vue.use(Router)
 
@@ -24,6 +25,12 @@ export default new Router({
       path: '/product/:id?',
       name: 'Product',
       component: Product,
+      props: true
+    },
+    {
+      path: '/pages/:id?',
+      name: 'Page',
+      component: Page,
       props: true
     }
   ]

@@ -32,7 +32,7 @@ export default {
       products: [],
       collections: [],
       window: window.innerWidth,
-      imageRatio: 1.5,
+      imageRatio: 1.529,
       padding: 12,
       maxWidth: 1200,
       tabletWidth: 1020,

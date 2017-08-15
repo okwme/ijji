@@ -1,12 +1,25 @@
 <template>
   <div id='toolbar'>
     <div class='grid'>
-      <router-link to="/" id='index'><img :src='logo'></router-link>
-      <div class='collections'>
-        <router-link to="/collections/all">All</router-link>
-        <router-link
-         :key='collection.attrs.title' v-for='collection in productCollections' :to="'/collections/' + $parent.collectionTitle(collection.attrs.title)">{{$parent.collectionTitle(collection.attrs.title)}}</router-link>
-        <a href='#' @click.prevent='clickCart'>Cart {{items ? '(' + items + ')' : ''}}</a>
+      <div class='col-1-3'>
+        <router-link to="/" id='index'><img id='logo' :src='logo'></router-link>
+      </div>
+      <div class='col-2-3'>
+        <div class='collections'>
+          <router-link
+          data-text='All'
+          to="/collections/all">All</router-link>
+          <router-link
+          :data-text='$parent.collectionTitle(collection.attrs.title)'
+          :key='collection.attrs.title' 
+          v-for='collection in productCollections' 
+          :to="'/collections/' + $parent.collectionTitle(collection.attrs.title)"
+          v-html='$parent.collectionTitle(collection.attrs.title)'>
+          </router-link>
+          <a 
+          :data-text="'Cart ' + (items ? '(' + items + ')' : '')"
+          href='#' @click.prevent='clickCart'>Cart {{items ? '(' + items + ')' : ''}}</a>
+        </div>
       </div>
     </div>
   </div>
@@ -73,14 +86,32 @@ export default {
     width:100%;
     left:0px;
     top:0px;
-    margin-top:45px;
+    margin-top:48px;
+
     #index {
       float: left;
+      img{
+        width:140px;
+      }
     }
     .collections {
       float:right;
       a {
-        margin-right: 6px;
+        display: inline-block;
+        margin-right: 24px;
+        text-transform: uppercase;
+        &:last-of-type {
+          margin-right:0;
+        }
+      }
+      a::after {
+        display:block;
+        content:attr(data-text);
+        font-weight:bold;
+        height:1px;
+        color:transparent;
+        overflow:hidden;
+        visibility:hidden;
       }
     }
   }
