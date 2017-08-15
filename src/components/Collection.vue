@@ -13,7 +13,7 @@
             'height' : (maxHeight) + 'px'
           }"></div>
           <div>
-          {{product.attrs.title}} - {{getPrice(product)}}
+          {{product.attrs.title}} &nbsp;–&nbsp; {{getPrice(product)}}
           </div>
         </div>
         <!-- <pre>{{product.attrs}}</pre> -->

@@ -17,9 +17,9 @@
     </div>
     <div class='col-1-12 tab-0 mob-0'></div>
     <div class='col-1-3 tab-1-3 mob-1-1 product-stats' >
-      <h1>{{product && product.attrs.title}} – {{product && product.attrs.variants[0].formatted_price}}</h1>
+      <h1 :style="{color: this.color + ' !important'}">{{product && product.attrs.title}} – {{product && product.attrs.variants[0].formatted_price}}</h1>
       <div v-if='tags'>
-        <span class='var-label'>Color:</span>
+        <span class='var-label' :style="{color: this.color + ' !important'}">Color:</span>
         <span v-for='tag in tags'>
           <router-link @click.native.stop="" v-for='link in tag' :key='link.id' :to='"/product/" + link.handle'>
             <div class='colorSwatch clicker' :class='isSelected(link)' :style='border(link.color)'>
@@ -29,19 +29,57 @@
         </span>
       </div>
       <div v-if='product && product.attrs.variants.length'>
-        <span class='var-label'>Size:</span>
+        <span class='var-label' :style="{color: this.color + ' !important'}">Size:</span>
         <span v-for='variant, index in product.attrs.variants'>
-          <span class='sizeVariant clicker' :class='{selected: index === variantKey}' @click.stop='variantKey = index' v-html='varSize(variant)'></span>
+          <span 
+          class='sizeVariant clicker'
+          :style="{
+            'background-color': (index === variantKey ? color : ''),
+            'color': (index !== variantKey ? color : '')
+          }"
+          :class='{selected: index === variantKey}' 
+          @click.stop='variantKey = index' 
+          v-html='varSize(variant)'></span>
         </span>
       </div>
       <div >
-        <span class='var-label'>Quantity:</span>
-        <span class='clicker quant' @click.stop='quantity > 1 && increaseQuantity(-1)'>-</span>
-        <span class='quant' v-html='quantity'></span>
-        <span class='clicker quant' @click.stop='quantity < 4 && increaseQuantity(1)'>+</span>
+        <span class='var-label' :style="{color: this.color + ' !important'}">Quantity:</span>
+        <span 
+        :style="{color: this.color + ' !important'}"
+        class='clicker quant' @click.stop='quantity > 1 && increaseQuantity(-1)'>-</span>
+        <span 
+        :style="{color: this.color + ' !important'}"
+        class='quant' v-html='quantity'></span>
+        <span 
+        :style="{color: this.color + ' !important'}"
+        class='clicker quant' @click.stop='quantity < 4 && increaseQuantity(1)'>+</span>
       </div>
       <div >
-        <span class='clicker' @click.stop='addToCart' v-html='buyText'></span>
+        <span 
+        :style="{'background-color': this.color }"
+        id='addToCart' 
+        class='clicker' 
+        @click.stop='addToCart' 
+        v-html='buyText'></span>
+      </div>
+      <div>
+        <div class='textChoices'>
+          <span
+          class='clicker'
+          :style="{
+            'color': textView === 0 ? 'white' : this.color,
+            'background-color': textView === 0 ? this.color : ''}"
+          @click='textView = 0'>Details</span>
+          <span
+          class='clicker'
+          :style="{
+            'color': textView === 1 ? 'white' : this.color,
+            'background-color': textView === 1 ? this.color : ''}"
+          @click='textView = 1'>Measurements</span>
+        </div>
+        <div
+        :style="{color: this.color + ' !important'}"
+        v-html='whichText'></div>
       </div>
     </div>
     <div class='col-1-1'>
@@ -57,6 +95,7 @@ export default {
 
   data () {
     return {
+      textView: 0,
       imageIndex: 0,
       imgs: [],
       variantKey: 0,
@@ -85,6 +124,20 @@ export default {
     }
   },
   computed: {
+    whichText () {
+      var foo = this.product.attrs.body_html.split('<strong>﻿Waist Sizing</strong>')
+      if (foo.length === 1) {
+        foo = this.product.attrs.body_html.split('<table')
+        foo[1] = '<table' + foo[1]
+      } else {
+        foo[1] = '<strong>﻿Waist Sizing</strong>' + foo[1]
+      }
+      if (this.textView === 0) {
+        return foo[0]
+      } else {
+        return foo[1]
+      }
+    },
     buyText () {
       return !this.inCart ? 'Add To Cart' : 'Remove From Cart'
     },
@@ -263,7 +316,7 @@ export default {
   min-height:100vh;
 }
 .currentImage {
-  margin-right:85px;
+  margin-right:90px;
   img {
     transition: filter ease 500ms, opacity ease 500ms;
     width:100%;
@@ -293,7 +346,7 @@ export default {
   > div {
     height:69px;
     overflow: hidden;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
     opacity: 0.5;
     cursor: pointer;
     transition: opacity ease 500ms, border ease 500ms;
@@ -307,7 +360,7 @@ export default {
   }
 }
 .colorSwatch {
-  margin-right: 15px;
+  margin-right: 14px;
   display:inline-block;
   transition: border ease 500ms;
   margin-bottom: -6px;
@@ -321,8 +374,11 @@ export default {
   }
 }
 .product-stats {
+  h1 {
+    margin: 7px 0px 24px 0px;
+  }
   > div {
-    margin-bottom: $padding+px;
+    margin-bottom: 24px;
     .var-label {
       margin-right: 18px;
     }
@@ -338,12 +394,27 @@ export default {
   }
 }
 .sizeVariant {
-  margin: 0px 15px;
+  margin: 0px 18px 0px 0px;
   padding:3px;
   &.selected {
     color: white;
-    background-color: black;
   }
+}
+#addToCart {
+  height:36px;
+  line-height:36px;
+  color: white;
+  width:100%;
+  display: block;
+  text-align:center;
+  margin-bottom:36px;
+}
+.textChoices {
+  span {
+    padding:3px;
+    margin-right: 15px;
+  }
+  margin-bottom:15px;
 }
 @media only screen and (max-width : $tablet-max-width) {
 
