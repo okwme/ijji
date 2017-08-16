@@ -2,7 +2,7 @@
   <div id='cart' :class='{open:visible}'>
     <h1>Cart ({{count}})</h1>
     <a id='closeCart' href='#' @click.prevent='clickCart'>x</a>
-    <div v-if='cart.attrs'>
+    <div v-if='cart && cart.attrs && cart.attrs.line_items.length'>
       <div class='line-item' v-for='item in cart.attrs.line_items'>
           <!--<div class='clicker' @click='removeItem(item)'>X</div>--> 
           <div class='w-img'>
@@ -27,15 +27,14 @@
           <div class='clear-both'></div>
       </div>
       <div class='mb6'>
-        <div class='mb6'>Special Instructions / Comments</div>
-        <textarea :model='specialInstructions'></textarea>
-      </div>
-      <div class='mb6'>
         <div class='left'>Total</div>
         <div class='right'>${{total}}</div>
         <div class='clear-both'></div>
       </div>
-      <button @click='checkout'>Checkout</button>
+      <a class='checkoutButton' target='_blank' :href='cart.checkoutUrl'>Checkout</a>
+    </div>
+    <div v-else>
+    Cart is empty
     </div>
   </div>
 </template>
@@ -74,6 +73,7 @@ export default {
       }
     },
     total () {
+      if (!this.cart) return
       var total = 0
       for (var i = 0; i < this.cart.attrs.line_items.length; i++) {
         var item = this.cart.attrs.line_items[i]
@@ -86,9 +86,6 @@ export default {
     quantity (item, amount) {
       if (item.quantity > 3 && amount > 0) return
       this.cart.updateLineItem(item['shopify-buy-uuid'], (item.quantity + amount))
-    },
-    checkout () {
-
     },
     getSmall (src) {
       return src.replace('.jpg', '_small.jpg')
@@ -136,9 +133,11 @@ export default {
     right:0px;
   }
   #closeCart {
+    text-transform: lowercase;
+    padding:10px;
     position:absolute;
-    top: 20px;
-    right:20px;
+    top: 10px;
+    right:10px;
   }
   .line-item {
     > div {
@@ -172,6 +171,19 @@ export default {
     min-height:100px;
     max-height:200px;
     max-width:100%;
+  }
+  .checkoutButton {
+    margin-top:24px;
+    height:36px;
+    line-height:36px;
+    color: white;
+    width:100%;
+    display: block;
+    text-align:center;
+    margin-bottom:12px;
+    border: none;
+    text-transform: uppercase;
+    background-color: $black;
   }
 }
 </style>

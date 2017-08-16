@@ -17,6 +17,7 @@
           v-html='$parent.collectionTitle(collection.attrs.title)'>
           </router-link>
           <a 
+          :class="{'router-link-active': cartVisible}"
           :data-text="'Cart ' + (items ? '(' + items + ')' : '')"
           href='#' @click.prevent='clickCart'>Cart {{items ? '(' + items + ')' : ''}}</a>
         </div>
@@ -64,6 +65,10 @@ export default {
     }
   },
   props: {
+    cartVisible: {
+      type: Boolean,
+      default: false
+    },
     cart: {
       type: Object,
       default: {}
@@ -87,7 +92,7 @@ export default {
     left:0px;
     top:0px;
     margin-top:48px;
-
+    z-index:2;
     #index {
       float: left;
       img{
@@ -102,6 +107,9 @@ export default {
         text-transform: uppercase;
         &:last-of-type {
           margin-right:0;
+        }
+        &.router-link-active{
+          font-weight: bold;
         }
       }
       a::after {

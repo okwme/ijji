@@ -6,7 +6,12 @@
       :cart='cart' 
       :visible='cartVisible'></cart>
     <div class='app' :class='{cartVisible:cartVisible}' @click='cartVisible = false'>
-      <toolbar @click-cart='clickCart' :cart='cart' :collections='collections' :product-collections='productCollections'></toolbar>
+      <toolbar 
+      @click-cart='clickCart' 
+      :cartVisible='cartVisible'
+      :cart='cart' 
+      :collections='collections' 
+      :product-collections='productCollections'></toolbar>
       <router-view 
       @click-cart='clickCart'
       @update-cart='updateCart' 
@@ -138,7 +143,7 @@ export default {
 }
 </script>
 
-<style  lang='scss'>
+<style lang='scss'>
   @import "sass/vars";
   @import "sass/global";
   @import "sass/grid";

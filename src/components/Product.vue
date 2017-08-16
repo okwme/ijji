@@ -55,12 +55,13 @@
         class='clicker quant' @click.stop='quantity < 4 && increaseQuantity(1)'>+</span>
       </div>
       <div >
-        <span 
+        <a 
+        href='#'
         :style="{'background-color': this.color }"
         id='addToCart' 
-        class='clicker' 
-        @click.stop='addToCart' 
-        v-html='buyText'></span>
+        class='clicker BIS_trigger'
+        :data-product-data="BAS" 
+        v-html='buyText'></a>
       </div>
       <div>
         <div class='textChoices'>
@@ -98,14 +99,29 @@ export default {
       textView: 0,
       imageIndex: 0,
       imgs: [],
-      variantKey: 0,
-      staticQuantity: 1
+      variantKey: 1,
+      staticQuantity: 1,
+      showBIS: true
     }
   },
   mounted () {
     this.setImgs()
   },
   watch: {
+    variant () {
+      // if (!this.variant) return
+      // var bis = document.getElementById('BIS')
+      // console.log(bis, bis && 'true')
+      // if (bis) {
+      //   var bisCopy = bis.cloneNode()
+      //   console.log('bis found, remove bis')
+      //   bis.parentNode.removeChild(bis)
+      //   setTimeout(() => {
+      //     console.log('add bis')
+      //     document.head.appendChild(bisCopy)
+      //   }, 3000)
+      // }
+    },
     imageIndex () {
       if (this.imgs[this.imageIndex] && !this.imgs[this.imageIndex].loaded) {
         this.load(this.imageIndex)
@@ -124,6 +140,33 @@ export default {
     }
   },
   computed: {
+    BAS () {
+      if (!this.product) return
+      var item = JSON.parse(JSON.stringify(this.product.attrs))
+      item.id = item.product_id
+      // for (var i = 0; i < item.variants.length; i++) {
+      //   var variant = item.variants[i]
+      //   if (!variant.available) variant.inventory_quantity = 0
+      //   // variant.inventory_quantity = 0
+      //   variant.inventory_management = 'shopify'
+      //   variant.option_values.map((option, index) => {
+      //     variant['option' + (index + 1)] = option.value
+      //     return option.value
+      //   })
+      //   variant.option = variant.option_values
+      //   item.variants[i] = variant
+      // }
+      var v = JSON.parse(JSON.stringify(this.variant))
+      if (!v.available) v.inventory_quantity = 0
+      v.inventory_management = 'shopify'
+      v.option_values.map((option, index) => {
+        v['option' + (index + 1)] = option.value
+        return option.value
+      })
+      v.option = v.option_values
+      item.variants = [v]
+      return JSON.stringify(item)
+    },
     whichText () {
       if (!this.product) return
       var foo = this.product.attrs.body_html.split('<table')
@@ -405,6 +448,7 @@ export default {
   display: block;
   text-align:center;
   margin-bottom:36px;
+  text-transform: uppercase;
 }
 .textChoices {
   span {

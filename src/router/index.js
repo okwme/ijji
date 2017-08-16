@@ -4,6 +4,7 @@ import Home from '@/components/Home'
 import Collection from '@/components/Collection'
 import Product from '@/components/Product'
 import Page from '@/components/Page'
+import Hello from '@/components/Hello'
 
 Vue.use(Router)
 
@@ -22,6 +23,11 @@ export default new Router({
       path: '/',
       name: 'Home',
       component: Home
+    },
+    {
+      path: '/Hello',
+      name: 'Hello',
+      component: Hello
     },
     {
       path: '/collections/:id?',
