@@ -1,4 +1,5 @@
 require('./check-versions')()
+require('shelljs/global')
 
 process.env.NODE_ENV = 'production'
 
@@ -12,12 +13,12 @@ var webpackConfig = require('./webpack.prod.conf')
 
 var spinner = ora('building for production...')
 spinner.start()
-
 rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
   if (err) throw err
   webpack(webpackConfig, function (err, stats) {
     spinner.stop()
     if (err) throw err
+    cp ('_redirects', config.build.assetsRoot)
     process.stdout.write(stats.toString({
       colors: true,
       modules: false,
