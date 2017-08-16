@@ -10,7 +10,12 @@ Vue.use(Router)
 export default new Router({
   mode: 'history',
   scrollBehavior (to, from, savedPosition) {
-    return { x: 0, y: 0 }
+    console.log(to)
+    console.log(from)
+    console.log(savedPosition)
+    if (from.name !== 'Product' || to.name !== 'Product') {
+      return { x: 0, y: 0 }
+    }
   },
   routes: [
     {

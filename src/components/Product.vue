@@ -125,16 +125,13 @@ export default {
   },
   computed: {
     whichText () {
-      var foo = this.product.attrs.body_html.split('<strong>﻿Waist Sizing</strong>')
-      if (foo.length === 1) {
-        foo = this.product.attrs.body_html.split('<table')
-        foo[1] = '<table' + foo[1]
-      } else {
-        foo[1] = '<strong>﻿Waist Sizing</strong>' + foo[1]
-      }
-      if (this.textView === 0) {
+      if (!this.product) return
+      var foo = this.product.attrs.body_html.split('<table')
+
+      if (this.textView === 0 || foo.length === 1) {
         return foo[0]
       } else {
+        foo[1] = '<table' + foo[1]
         return foo[1]
       }
     },
