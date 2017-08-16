@@ -1,7 +1,7 @@
 <template>
   <div id='collections' class='grid'>
-    <div v-if='!productsFiltered || !productsFiltered.length'>
-      More products coming soon!
+    <div v-if='products.length && !productsFiltered.length'>
+      <h1 class='center'>More products coming soon</h1>
     </div>
     <div class='col-1-3 tab-1-2 mob-1-1'  v-for='product, i in productsFiltered'>
       <router-link :to='"/product/" + product.attrs.handle'>

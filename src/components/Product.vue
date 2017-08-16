@@ -413,6 +413,7 @@ export default {
   span {
     padding:3px;
     margin-right: 15px;
+    text-transform: uppercase;
   }
   margin-bottom:15px;
 }
