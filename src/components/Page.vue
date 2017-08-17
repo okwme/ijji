@@ -43,6 +43,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import "../sass/vars";
 #page {
   min-height:400px;
   .page {
@@ -59,6 +60,22 @@ export default {
       &:hover {
         font-weight: normal;
       }
+    }
+  }
+}
+@media only screen and (max-width : $tablet-max-width) {
+  #page {
+    .page {
+      max-width: 353px;
+      margin-bottom: 120px;
+    }
+  }
+}
+@media only screen and (max-width : $mobile-max-width) {
+  #page {
+    .page {
+      margin-top: 264px;
+      max-width:100%;
     }
   }
 }

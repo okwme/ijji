@@ -1,8 +1,8 @@
 $max-width: 1020px;
 $tablet-max-width: 1019px;
 $tablet-min-width: 768px;
-$mobile-max-width: 480px;
+$mobile-max-width: $tablet-min-width - 1;
 $padding: 21;
 $tablet-padding: 12;
-$mobile-padding: 12;
+$mobile-padding: 9;
 $black: #111;

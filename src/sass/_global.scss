@@ -73,10 +73,22 @@ a:hover {
 }
 
 @media only screen and (max-width : $tablet-max-width) {
+
+  h1 {
+    font-size: 18px;
+  }
   .hide-on-desktop {
     display: inherit;
   } 
   .hide-on-tablet {
+    display: none;
+  }
+}
+@media only screen and (max-width : $mobile-max-width) {
+  .show-on-mobile {
+    display: inherit;
+  } 
+  .hide-on-mobile {
     display: none;
   }
 }

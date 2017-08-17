@@ -16,16 +16,16 @@ html, body {
   min-width:320px;
   margin-left:auto;
   margin-right:auto;
-  padding: 0px #{($padding/2) * 2}px;
+  padding: 0px #{($padding/2) * 3}px;
 }
 #maxWidth {
-  max-width: $max-width;
+  max-width: $max-width - ($padding * 2);
 }
 #tabletWidth {
-  max-width: $tablet-max-width;
+  max-width: $tablet-max-width - ($tablet-padding * 2);
 }
 #mobileWidth {
-  max-width: $mobile-max-width;
+  max-width: $mobile-max-width - ($mobile-padding * 2);
 }
 [class*='col-'] {
   float: left;
@@ -71,7 +71,7 @@ html, body {
 @media only screen and (max-width : $tablet-max-width) {
   .grid{
     // padding: 0px #{$tablet-padding / 2}px;
-    padding: 0px #{($tablet-padding/2) * 2}px;
+    padding: 0px #{($tablet-padding/2) * 3}px;
   }
   [class*='col-'] {
     padding:0px #{$tablet-padding / 2}px;
@@ -107,7 +107,7 @@ html, body {
 @media only screen and (min-width : 0px) and (max-width : $mobile-max-width) {
   .grid{
     // padding: 0px #{$mobile-padding / 2}px;
-    padding: 0px #{($mobile-padding/2) * 2}px;
+    padding: 0px #{($mobile-padding/2) * 3}px;
   }
   [class*='col-'] {
     padding:0px #{$mobile-padding / 2}px;

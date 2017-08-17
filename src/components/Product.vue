@@ -2,9 +2,15 @@
   <div id='product' class='grid'>
     <div class='col-7-12 tab-2-3 mob-1-1'>
       <div class='currentImage hide-on-desktop' :class='getClass(imageIndex)'>
-        <img :src='getImg(imageIndex)'>
+        <div
+        :style="{
+          'background-image':'url(' + getImg(imageIndex) + ')',
+          'height' : (maxHeight) + 'px'
+        }"></div>
+<!--         <img :src='getImg(imageIndex)'> -->
       </div>
       <div class='imageOptions'>
+        <img v-for='(image, index) in imgs' class='invisible' :src="getImg(index)">
         <div v-for='(image, index) in imgs' :style='colorBorder' :class='{current: index === imageIndex}'>
           <a :href='image.src' @click.prevent.stop='imageIndex = index'>
             <img :src='getImg(index)'>
@@ -12,13 +18,18 @@
         </div>
       </div>
       <div class='currentImage hide-on-tablet' :class='getClass(imageIndex)'>
-        <img :src='getImg(imageIndex)'>
+        <div
+        :style="{
+          'background-image':'url(' + getImg(imageIndex) + ')',
+          'height' : (maxHeight) + 'px'
+        }"></div>
+<!--         <img :src='getImg(imageIndex)'> -->
       </div>
     </div>
     <div class='col-1-12 tab-0 mob-0'></div>
     <div class='col-1-3 tab-1-3 mob-1-1 product-stats' >
       <h1 :style="{color: this.color + ' !important'}">{{product && product.attrs.title}} – {{product && product.attrs.variants[0].formatted_price}}</h1>
-      <div v-if='tags'>
+      <div class='tags' v-if='tags'>
         <span class='var-label' :style="{color: this.color + ' !important'}">Color:</span>
         <span v-for='tag in tags'>
           <router-link @click.native.stop="" v-for='link in tag' :key='link.id' :to='"/product/" + link.handle'>
@@ -28,7 +39,7 @@
           </router-link>
         </span>
       </div>
-      <div v-if='product && product.attrs.variants.length'>
+      <div class='variants' v-if='product && product.attrs.variants.length'>
         <span class='var-label' :style="{color: this.color + ' !important'}">Size:</span>
         <span v-for='variant, index in product.attrs.variants'>
           <span 
@@ -42,8 +53,8 @@
           v-html='varSize(variant)'></span>
         </span>
       </div>
-      <div >
-        <span class='var-label' :style="{color: this.color + ' !important'}">Quantity:</span>
+      <div  class='quantity'>
+        <span class='var-label' :style="{color: this.color + ' !important'}"><span class='hide-on-mobile'>Quantity:</span><span class='hide-on-desktop hide-on-tablet show-on-mobile'>Qty:</span></span>
         <span 
         :style="{color: this.color + ' !important'}"
         class='clicker quant' @click.stop='quantity > 1 && increaseQuantity(-1)'>-</span>
@@ -54,7 +65,7 @@
         :style="{color: this.color + ' !important'}"
         class='clicker quant' @click.stop='quantity < 4 && increaseQuantity(1)'>+</span>
       </div>
-      <div >
+      <div class='buy-div'>
         <a 
         href='#'
         :style="{'background-color': this.color }"
@@ -65,7 +76,7 @@
         @click.prevent='addToCart'
         v-html='buyText'></a>
       </div>
-      <div>
+      <div class='text-div'>
         <div class='textChoices'>
           <span
           class='clicker'
@@ -123,7 +134,9 @@ export default {
     },
     imgs () {
       if (this.imgs.length) {
-        this.startLoading()
+        this.$nextTick(function () {
+          this.startLoading()
+        })
       }
     }
   },
@@ -193,6 +206,15 @@ export default {
       return {
         'border': '2px solid ' + this.color
       }
+    },
+    imgSpace () {
+      var w = this.$parent.window > this.$parent.maxWidth ? this.$parent.maxWidth : this.$parent.window
+      var col = w > this.$parent.tabletWidth ? 2 : (w > this.$parent.mobileWidth ? 1.6 : 1)
+      var long = (w / col) * window.devicePixelRatio
+      return (long * this.$parent.imageRatio) - this.$parent.padding
+    },
+    maxHeight () {
+      return (this.imgSpace + this.$parent.padding) / window.devicePixelRatio
     }
   },
   methods: {
@@ -268,7 +290,7 @@ export default {
       imgMed.src = this.imgSize(image.src, '_medium')
 
       var imgSmall = new Image()
-      imgSmall.src = this.imgSize(image.src, '_small')
+      imgSmall.src = this.imgSize(image.src, '_medium')
     },
     getClass (index) {
       return {
@@ -280,14 +302,10 @@ export default {
       var main = index === this.imageIndex
       var loaded = this.imgs[index].loaded
       var src = this.imgs[index].src
-      return main ? this.imgSize(src, loaded ? this.getSize() : '_medium') : this.imgSize(src, '_small')
+      return main ? this.imgSize(src, loaded ? this.getSize() : '_medium') : this.imgSize(src, '_medium')
     },
     getSize () {
-      var w = this.$parent.window > this.$parent.maxWidth ? this.$parent.maxWidth : this.$parent.window
-      var col = w > this.$parent.tabletWidth ? 2 : (w > this.$parent.mobileWidth ? 1.333 : 1)
-      var long = (w / col) * window.devicePixelRatio
-      var imgSpace = (long * this.$parent.imageRatio) - this.$parent.padding
-      return imgSpace > 2048 ? '' : (imgSpace > 1024 ? '_2048x2048' : (imgSpace > 600 ? '_1024x1024' : (imgSpace > 480 ? '_grande' : '_large')))
+      return this.imgSpace > 2048 ? '' : (this.imgSpace > 1024 ? '_2048x2048' : (this.imgSpace > 600 ? '_1024x1024' : (this.imgSpace > 480 ? '_grande' : '_large')))
     },
     imgSize (src, size) {
       return src.replace('.jpg', size + '.jpg')
@@ -325,21 +343,30 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-  @import "../sass/vars";
+<style lang="scss" >
+@import "../sass/vars";
 
 #product {
   padding-top:168px;
-  min-height:100vh;
+  min-height:80vh;
+  .invisible {
+    position:absolute;
+    width:0px;
+    height:0px;
+    visibility: hidden;
+  }
 }
 .currentImage {
   margin-right:90px;
-  img {
-    transition: filter ease 500ms, opacity ease 500ms;
+  > div {
+    transition: opacity ease 500ms;
     width:100%;
     opacity: 1;
-    -webkit-filter: blur(0px); /* Safari 6.0 - 9.0 */
-    filter: blur(0px);
+    // -webkit-filter: blur(0px); 
+    // filter: blur(0px);
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-size: cover;
   }
   &.loading {
     // position:relative;
@@ -350,7 +377,7 @@ export default {
     //   left:50%;
     //   transform: translateX(-50%);
     // }
-    img{
+    > div{
       // -webkit-filter: blur(2px);
       // filter: blur(2px);
       opacity: 0.5;
@@ -375,6 +402,9 @@ export default {
       opacity:1;
     }
   }
+}
+.tags span:last-of-type a:last-of-type .colorSwatch {
+  margin-right:0px;
 }
 .colorSwatch {
   margin-right: 14px;
@@ -417,6 +447,9 @@ export default {
     color: white;
   }
 }
+.variants span:last-of-type .sizeVariant {
+  margin-right:0;
+}
 #addToCart {
   height:36px;
   line-height:36px;
@@ -435,21 +468,96 @@ export default {
   }
   margin-bottom:15px;
 }
-@media only screen and (max-width : $tablet-max-width) {
 
-.currentImage {
-  margin-right:18px;
-}
-.imageOptions {
-  float:none;
-  display: block;
-  width: 100%;
-  > div {
-    width:50px;
-    height:50px;
-    display: inline-block;
+@media only screen and (max-width : $tablet-max-width) {
+  #product {
+    margin-bottom:48px;
+  }
+  .currentImage {
+    margin-right:18px;
+    margin-bottom:12px;
+  }
+  .imageOptions {
+    float:none;
+    display: block;
+    width: 100%;
+    > div {
+      width:50px;
+      height:50px;
+      display: inline-block;
+      margin-right:12px;
+      margin-bottom:12px;
+    }
   }
 }
-
+@media only screen and (max-width : $mobile-max-width) {
+  #product {
+    padding-top:204px;
+  }
+  .currentImage{
+    margin-right:0px;
+  }
+  .imageOptions {
+    > div {
+      width:36px;
+      height:36px;
+    }
+  }
+  .colorSwatch {
+    margin-right:10px;
+  }
+  .product-stats {
+    > div .var-label {
+      margin-right: 10px;
+    }
+    h1 {
+      margin-top:36px;
+    }
+    .text-div {
+      margin-bottom:0px;
+    }
+    .sizeVariant{
+      margin-right:12px;
+    }
+    .tags, .variants {
+      width:calc(50% - 2px);
+      display:inline-block;
+    }
+    .quantity, .buy-div {
+      position:fixed;
+      bottom:0px;
+      background-color: white;
+      margin-bottom:0px;
+    }
+    .quantity {
+      transition: 500ms ease left;
+      left:0px;
+      width: 100%;
+      height:60px;
+      line-height:60px;
+      padding-left:18px;
+      box-shadow: 0 2px 4px 0 rgba(0,0,0,0.50);
+      .var-label{
+        margin-right:12px;
+      }
+    }
+    .buy-div {
+      transition: 500ms ease right;
+      right: 18px;
+      bottom:12px;
+      width:206px;
+      #addToCart {
+        margin-bottom:0px;
+      }
+    }
+  }
+  &.cartVisible {
+    .quantity {
+      left:-320px;
+    }
+    .buy-div {
+      right: 338px;
+    }
+  }
 }
 </style>

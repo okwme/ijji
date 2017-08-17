@@ -1,10 +1,10 @@
 <template>
   <div id='toolbar'>
     <div class='grid'>
-      <div class='col-1-3'>
+      <div class='col-1-3 mob-1-1'>
         <router-link to="/" id='index'><img id='logo' :src='logo'></router-link>
       </div>
-      <div class='col-2-3'>
+      <div class='col-2-3 mob-1-1'>
         <div class='collections'>
           <router-link
           data-text='All'
@@ -17,7 +17,7 @@
           v-html='$parent.collectionTitle(collection.attrs.title)'>
           </router-link>
           <a 
-          :class="{'router-link-active': cartVisible}"
+          
           :data-text="'Cart ' + (items ? '(' + items + ')' : '')"
           href='#' @click.prevent='clickCart'>Cart {{items ? '(' + items + ')' : ''}}</a>
         </div>
@@ -86,6 +86,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  @import "../sass/vars";
+
   #toolbar {
     position:absolute;
     width:100%;
@@ -103,13 +105,15 @@ export default {
       float:right;
       a {
         display: inline-block;
-        margin-right: 24px;
+        margin-right: 18px;
+        padding:3px;
         text-transform: uppercase;
         &:last-of-type {
           margin-right:0;
         }
         &.router-link-active{
-          font-weight: bold;
+          background-color: $black;
+          color: white;
         }
       }
       a::after {
@@ -120,6 +124,32 @@ export default {
         color:transparent;
         overflow:hidden;
         visibility:hidden;
+      }
+    }
+  }
+  @media only screen and (max-width : $mobile-max-width) {
+    #toolbar {
+      #index{
+        float: none;
+        img {
+          margin: auto;
+          display: block;
+          margin-bottom: 24px;
+        }
+      }
+
+      .collections {
+        float:none;
+        text-align:center;
+        a {
+          margin:0px 9px;
+          &:first-of-type{
+            margin-left:0px;
+          }
+          &:last-of-type {
+            margin-right:0px;
+          }
+        }
       }
     }
   }

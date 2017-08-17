@@ -6,19 +6,19 @@
       </div>
     </div>
     <div class='grid'>
-      <div class='collections col-1-6'>
+      <div class='collections col-1-6 mob-1-3'>
         <div v-for='collection in productCollections'>
           <router-link :to="'/collections/' + $parent.collectionTitle(collection.attrs.title)">{{$parent.collectionTitle(collection.attrs.title)}}</router-link>
         </div>
       </div>
-      <div class='links col-1-6'>
+      <div class='links col-1-6 mob-1-3'>
         <div v-for='nav in navs'>
           <router-link :to="'/pages/' + nav">{{nav}}</router-link>
         </div>
       </div>
-      <div class='links col-1-6' v-html='social && social.attrs.body_html'></div>
+      <div class='links col-1-6 mob-1-3' v-html='social && social.attrs.body_html'></div>
       <div class='col-1-12 tab-0'>&nbsp;</div>
-      <div class='mailchimp col-5-12 tab-1-2' v-html='mailchimp && mailchimp.attrs.body_html'></div>
+      <div class='mailchimp col-5-12 tab-1-2 mob-1-1' v-html='mailchimp && mailchimp.attrs.body_html'></div>
     </div>
   </div>
 </template>
@@ -93,7 +93,13 @@ export default {
       margin-top: 24px;
       a {
         display:inline-block;
-        margin-bottom:12px;
+        margin-bottom:6px;
+        padding:3px;
+
+        &.router-link-active{
+          background-color: $black;
+          color: white;
+        }
       }
     }
     .newsletter {
@@ -136,4 +142,16 @@ export default {
       }
     }
   }
+
+@media only screen and (max-width : $tablet-max-width) {
+  #footer {
+    margin-bottom: 72px;
+    .banner {
+      margin-top:0px;
+    }
+    .newsletter {
+      margin-top: 48px;
+    }
+  }
+}
 </style>

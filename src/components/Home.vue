@@ -56,6 +56,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  @import "../sass/vars";
+
   #home {
     min-height:100vh;
     background-size: cover;
@@ -66,4 +68,16 @@ export default {
       opacity:0.5;
     }
   }
+@media only screen and (max-width : $tablet-max-width) {
+  #home {
+    margin-bottom: 72px;
+
+  }
+}
+@media only screen and (max-width : $mobile-max-width) {
+  #home {
+    background-position: 40% 0%;
+    background-size: 340%;
+  }
+}
 </style>

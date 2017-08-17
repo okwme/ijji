@@ -186,4 +186,11 @@ export default {
     background-color: $black;
   }
 }
+@media only screen and (max-width : $mobile-max-width) {
+// #cart {
+//   width: 100vw;
+//   right:-100vw;
+// }
+
+}
 </style>

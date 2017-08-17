@@ -1,6 +1,6 @@
 <template>
   <div id='collections' class='grid'>
-    <div v-if='products.length && !productsFiltered.length'>
+    <div v-if='products && products.length && productsFiltered && !productsFiltered.length'>
       <h1 class='center'>More products coming soon</h1>
     </div>
     <div class='col-1-3 tab-1-2 mob-1-1'  v-for='product, i in productsFiltered'>
@@ -46,11 +46,8 @@ export default {
     },
     imgSpace () {
       var w = this.$parent.window > this.$parent.maxWidth ? this.$parent.maxWidth : this.$parent.window
-      console.log('w', w)
       var col = w > this.$parent.tabletWidth ? 3 : (w > this.$parent.mobileWidth ? 2 : 1)
-      console.log('col', col)
       var long = (w / col) * window.devicePixelRatio
-      console.log('long', long)
       return (long * this.$parent.imageRatio) - this.$parent.padding
     },
     imgSize () {
@@ -72,24 +69,24 @@ export default {
       for (let product of this.productsFiltered) {
         this.imgs.push({
           url: this.getImage(product),
-          small: this.getImage(product, '_small'),
+          small: this.getImage(product, '_medium'),
           loaded: false
         })
       }
-      this.loadImages()
+      this.$nextTick(function () {
+        this.loadImages()
+      })
     },
     loadImages () {
       var vm = this
       var key = this.imgs.findIndex((img) => !img.loaded)
       if (key > -1) {
-        console.log(key)
         var img = this.imgs[key]
         var image = new Image()
         image.onload = function () {
           vm.imgs[key].loaded = true
           vm.loadImages()
         }
-        console.log(img.url)
         image.src = img.url
       }
     },
@@ -121,11 +118,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "../sass/vars";
 #collections {
   padding-top:168px;
   min-height:100vh;
   > div {
-    margin-bottom:24px;
+    margin-bottom:48px;
     .collection-bg {
       background-position:center top;
       background-repeat: no-repeat;
@@ -139,6 +137,14 @@ export default {
       }
     }
   }
-  
+}
+@media only screen and (max-width : $mobile-max-width) {
+  #collections {
+    padding-top:204px;
+    padding-bottom:12px;
+    > div {
+      margin-bottom:36px;
+    }
+  }
 }
 </style>
