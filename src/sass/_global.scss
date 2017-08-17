@@ -77,6 +77,9 @@ input {
 }
 @media only screen and (max-width : $tablet-max-width) {
 
+  a:hover {
+    font-weight: normal;
+  }
   h1 {
     font-size: 18px;
   }

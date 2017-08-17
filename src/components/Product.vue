@@ -66,15 +66,14 @@
         class='clicker quant' @click.stop='quantity < 4 && increaseQuantity(1)'>+</span>
       </div>
       <div class='buy-div'>
-        <a 
-        href='#'
+        <span
         :style="{'background-color': this.color }"
         id='addToCart' 
         :class="{BIS_trigger: variant && !variant.available}"
         class='clicker'
         :data-product-data="BIS" 
         @click.prevent='addToCart'
-        v-html='buyText'></a>
+        v-html='buyText'></span>
       </div>
       <div class='text-div'>
         <div class='textChoices'>
