@@ -98,7 +98,7 @@ export default {
     #index {
       float: left;
       img{
-        width:140px;
+        max-width:150px;
       }
     }
     .collections {

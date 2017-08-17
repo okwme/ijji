@@ -71,7 +71,10 @@ a:hover {
 .mb6 {
   margin-bottom:6px;
 }
-
+input {
+  border-radius: 0;
+  -webkit-appearance: none;
+}
 @media only screen and (max-width : $tablet-max-width) {
 
   h1 {
