@@ -130,7 +130,7 @@ export default {
         }
         > input {
           padding-left:14px;
-          width: calc(100% - 100px);
+          width: calc(100% - 110px);
         }
         #mc_embed_container {
           float:right;

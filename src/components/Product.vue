@@ -225,8 +225,11 @@ export default {
       }
     },
     addToCart (e) {
+      console.log('add to cart begin')
       if (!this.variant.available) return true
+      console.log('add to cart 2')
       e.stopPropagation()
+      console.log('add to cart 3')
       if (this.inCart) {
         this.cart.removeLineItem(this.inCart['shopify-buy-uuid']).then((cart) => {
           this.$emit('update-cart', cart)
@@ -238,6 +241,7 @@ export default {
           this.$emit('click-cart', true)
         })
       }
+      console.log('add to cart 4')
       this.staticQuantity = 1
     },
     varSize (variant) {
