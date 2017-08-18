@@ -19,7 +19,7 @@
       :collections='collections' 
       :cart='cart'></router-view>
       <bottom :collections='collections' :product-collections='productCollections'></bottom>
-      <div id='maxWidth'></div><div id='tabletWidth'></div><div id='mobileWidth'></div>
+      <div id='desktopWidth'></div><div id='tabletWidth'></div><div id='mobileWidth'></div>
     </div>
   </div>
 </template>
@@ -37,9 +37,10 @@ export default {
       products: [],
       collections: [],
       window: window.innerWidth,
-      imageRatio: 1.5,
+      imageRatio: 0.65,
       padding: 12,
       maxWidth: 1200,
+      desktopWidth: 1200,
       tabletWidth: 1020,
       mobileWidth: 480
     }
@@ -71,7 +72,9 @@ export default {
   created () {
     document.onkeydown = this.keyPress
     window.onresize = this.$debounce(this.resize, 200)
-
+    setTimeout(() => {
+      this.resize()
+    }, 500)
     this.$client.fetchAllProducts().then((products) => {
       this.products.push(...products)
     })
@@ -107,9 +110,16 @@ export default {
     },
     resize (e) {
       this.window = window.innerWidth
+      var grid = document.querySelectorAll('.grid')
+      if (grid.length) {
+        grid = grid[0]
+        var style = window.getComputedStyle(grid)
+        this.maxWidth = parseFloat(style.getPropertyValue('max-width').slice(0, -2))
+        this.padding = parseFloat(style.getPropertyValue('padding-right').slice(0, -2)) * (2 / 3)
+      }
     },
     setBreakPoints () {
-      var ids = ['maxWidth', 'tabletWidth', 'mobileWidth']
+      var ids = ['desktopWidth', 'tabletWidth', 'mobileWidth']
       for (var i = 0; i < ids.length; i++) {
         var id = ids[i]
         var el = document.getElementById(id)

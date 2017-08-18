@@ -46,15 +46,18 @@ export default {
     },
     imgSpace () {
       var w = this.$parent.window > this.$parent.maxWidth ? this.$parent.maxWidth : this.$parent.window
-      var col = w > this.$parent.tabletWidth ? 3 : (w > this.$parent.mobileWidth ? 2 : 1)
-      var long = (w / col) * window.devicePixelRatio
-      return (long * this.$parent.imageRatio) - this.$parent.padding
+      var col = w <= (this.$parent.mobileWidth) && 1
+      if (!col) col = w <= (this.$parent.tabletWidth) && 0.5
+      if (!col) col = w <= (this.$parent.desktopWidth) && 0.3333
+      w -= (this.$parent.padding * 3)
+      var long = (((w * col) - this.$parent.padding) * window.devicePixelRatio)
+      return long / this.$parent.imageRatio
     },
     imgSize () {
       return this.imgSpace > 2048 ? '' : (this.imgSpace > 1024 ? '_2048x2048' : (this.imgSpace > 600 ? '_1024x1024' : (this.imgSpace > 480 ? '_grande' : '_large')))
     },
     maxHeight () {
-      return (this.imgSpace + this.$parent.padding) / window.devicePixelRatio
+      return (this.imgSpace) / window.devicePixelRatio
     }
   },
   watch: {

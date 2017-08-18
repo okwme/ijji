@@ -131,12 +131,23 @@ export default {
         > input {
           padding-left:14px;
           width: calc(100% - 110px);
+          &:focus {
+            outline: none; 
+            text-decoration: underline;
+          }
         }
         #mc_embed_container {
           float:right;
           input {
             padding:0 14px;
             text-transform: uppercase;
+            &:hover {
+              font-weight: bold;
+            }
+            &:focus {
+              outline: none;
+              font-weight: bold;
+            }
           }
         }
       }

@@ -3,6 +3,8 @@
     <div class='col-7-12 tab-2-3 mob-1-1'>
       <div class='currentImage hide-on-desktop' :class='getClass(imageIndex)'>
         <div
+        class='clicker'
+        @click='incrementPhoto()'
         :style="{
           'background-image':'url(' + getImg(imageIndex) + ')',
           'height' : (maxHeight) + 'px'
@@ -19,6 +21,8 @@
       </div>
       <div class='currentImage hide-on-tablet' :class='getClass(imageIndex)'>
         <div
+        class='clicker'
+        @click='incrementPhoto()'
         :style="{
           'background-image':'url(' + getImg(imageIndex) + ')',
           'height' : (maxHeight) + 'px'
@@ -167,7 +171,7 @@ export default {
       }
     },
     buyText () {
-      return !this.inCart ? 'Add To Cart' : 'Remove From Cart'
+      return this.variant && (!this.variant.available ? 'notify me when it\'s back' : (!this.inCart ? 'Add To Cart' : 'Remove From Cart'))
     },
     variant () {
       return this.product && this.product.attrs.variants.filter((variant, index) => {
@@ -206,17 +210,44 @@ export default {
         'border': '2px solid ' + this.color
       }
     },
+    // imgSpace () {
+    //   var w = this.$parent.window + (this.$parent.padding * 3) > this.$parent.maxWidth ? this.$parent.maxWidth : this.$parent.window
+    //   w += this.$parent.padding * 3
+    //   var col = w > this.$parent.tabletWidth ? 0.5 : (w > this.$parent.mobileWidth ? 0.66 : 1)
+    //   w -= (this.$parent.padding * 4)
+    //   var long = ((w * col) - this.$parent.padding) * window.devicePixelRatio
+    //   return long / this.$parent.imageRatio
+    // },
     imgSpace () {
       var w = this.$parent.window > this.$parent.maxWidth ? this.$parent.maxWidth : this.$parent.window
-      var col = w > this.$parent.tabletWidth ? 2 : (w > this.$parent.mobileWidth ? 1.6 : 1)
-      var long = (w / col) * window.devicePixelRatio
-      return (long * this.$parent.imageRatio) - this.$parent.padding
+      var col = false
+      if (w <= (this.$parent.mobileWidth)) {
+        col = 1
+        w -= (this.$parent.padding * 3)
+      } else if (w <= (this.$parent.tabletWidth)) {
+        col = 0.6666
+        w -= (this.$parent.padding * 4)
+      } else if (w <= (this.$parent.desktopWidth)) {
+        col = 0.5
+        w -= (this.$parent.padding * 4)
+      } else {
+        col = 0.5
+      }
+      var long = (((w * col) - this.$parent.padding) * window.devicePixelRatio)
+      if (col === 0.6666) {
+        long -= 10
+      }
+      return long / this.$parent.imageRatio
     },
     maxHeight () {
-      return (this.imgSpace + this.$parent.padding) / window.devicePixelRatio
+      return this.imgSpace / window.devicePixelRatio
     }
   },
   methods: {
+    incrementPhoto () {
+      this.imageIndex += 1
+      this.imageIndex = this.imageIndex % this.imgs.length
+    },
     increaseQuantity (amount) {
       if (this.inCart) {
         this.cart.updateLineItem(this.inCart['shopify-buy-uuid'], (this.quantity + amount))

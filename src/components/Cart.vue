@@ -1,7 +1,7 @@
 <template>
   <div id='cart' :class='{open:visible}'>
     <h1>Cart ({{count}})</h1>
-    <a id='closeCart' href='#' @click.prevent='clickCart'>x</a>
+    <a id='closeCart' href='#' @click.prevent='clickCart'>&#xd7;</a>
     <div v-if='cart && cart.attrs && cart.attrs.line_items.length'>
       <div class='line-item' v-for='item in cart.attrs.line_items'>
           <!--<div class='clicker' @click='removeItem(item)'>X</div>--> 

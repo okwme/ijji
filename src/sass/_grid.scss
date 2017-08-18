@@ -18,14 +18,17 @@ html, body {
   margin-right:auto;
   padding: 0px #{($padding/2) * 3}px;
 }
-#maxWidth {
-  max-width: $max-width - ($padding * 2);
+#desktopWidth {
+  max-width: $max-width;
+  // padding:0 $padding+px;
 }
 #tabletWidth {
-  max-width: $tablet-max-width - ($tablet-padding * 2);
+  max-width: $tablet-max-width;
+  // padding:0 $tablet-padding+px;
 }
 #mobileWidth {
-  max-width: $mobile-max-width - ($mobile-padding * 2);
+  max-width: $mobile-max-width;
+  // padding:0 $mobile-padding+px;
 }
 [class*='col-'] {
   float: left;
