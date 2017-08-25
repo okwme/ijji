@@ -75,6 +75,7 @@ export default {
     }
   },
   created () {
+    this.addBackInStock()
     window.addEventListener('touchstart', this.addTouch)
     document.onkeydown = this.keyPress
     window.onresize = this.$debounce(this.resize, 200)
@@ -102,6 +103,12 @@ export default {
     this.setBreakPoints()
   },
   methods: {
+    addBackInStock () {
+      var s = document.createElement('script')
+      s.type = 'text/javascript'
+      s.src = 'https://app.backinstock.org/widget/6048_' + new Date()
+      document.body.appendChild(s)
+    },
     addTouch () {
       this.touchScreen = true
       window.removeEventListener('touchstart', this.addTouch)
