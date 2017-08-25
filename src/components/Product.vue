@@ -1,14 +1,34 @@
 <template>
   <div id='product' class='grid'>
     <div class='col-7-12 tab-2-3 mob-1-1'>
-      <div class='currentImage hide-on-desktop' :class='getClass(imageIndex)'>
-        <div
+      <div class='currentImage hide-on-desktop' >
+       <swipe
+        v-on:index-update="indexChanged"
+        v-if='imgs.length'
+        :auto="0"
+        :showIndicators="false"
+        :style="{'height' : (maxHeight) + 'px'}"
+        class="my-swipe">
+          <swipe-item 
+          :style="{'height' : (maxHeight) + 'px'}"
+          v-for="(image, index) in imgs" class="slide1">
+            <div
+            :class='getClass(imageIndex)'
+            class='clicker slideImg'
+            :style="{
+              'background-image':'url(' + getImg(index) + ')',
+              'height' : (maxHeight) + 'px'
+            }"></div>
+          </swipe-item>
+        </swipe>
+
+<!--         <div
         class='clicker'
         @click='incrementPhoto()'
         :style="{
           'background-image':'url(' + getImg(imageIndex) + ')',
           'height' : (maxHeight) + 'px'
-        }"></div>
+        }"></div> -->
 <!--         <img :src='getImg(imageIndex)'> -->
       </div>
       <div class='imageOptions'>
@@ -36,7 +56,7 @@
       <div class='tags' v-if='tags'>
         <span class='var-label' :style="{color: this.color + ' !important'}">Color:</span>
         <span v-for='tag in tags'>
-          <router-link @click.native.stop="" v-for='link in tag' :key='link.id' :to='"/product/" + link.handle'>
+          <router-link class='tagLink' @click.native.stop="" v-for='link in tag' :key='link.id' :to='"/product/" + link.handle'>
             <div class='colorSwatch clicker' :class='isSelected(link)' :style='border(link.color)'>
               <div :style='bg(link.color)'></div>
             </div>
@@ -106,6 +126,9 @@
 </template>
 
 <script>
+import { Swipe, SwipeItem } from 'vue-swipe'
+require('vue-swipe/dist/vue-swipe.css')
+
 export default {
 
   name: 'Product',
@@ -120,8 +143,15 @@ export default {
       showBIS: true
     }
   },
+  components: {
+    'swipe': Swipe,
+    'swipe-item': SwipeItem
+  },
   mounted () {
     this.setImgs()
+  },
+  destroyed () {
+    this.$emit('color-change', null)
   },
   watch: {
     imageIndex () {
@@ -141,6 +171,9 @@ export default {
           this.startLoading()
         })
       }
+    },
+    color () {
+      this.$emit('color-change', this.color)
     }
   },
   computed: {
@@ -244,6 +277,9 @@ export default {
     }
   },
   methods: {
+    indexChanged (newIndex) {
+      this.imageIndex = newIndex
+    },
     incrementPhoto () {
       this.imageIndex += 1
       this.imageIndex = this.imageIndex % this.imgs.length
@@ -329,7 +365,10 @@ export default {
     },
     getImg (index) {
       if (!this.imgs[index]) return
-      var main = index === this.imageIndex
+      var next = (this.imageIndex + 1) % this.imgs.length
+      var prev = (this.imageIndex - 1)
+      prev = prev < 0 ? this.imgs.length : prev
+      var main = index === this.imageIndex || index === next || index === prev
       var loaded = this.imgs[index].loaded
       var src = this.imgs[index].src
       return main ? this.imgSize(src, loaded ? this.getSize() : '_medium') : this.imgSize(src, '_medium')
@@ -388,7 +427,7 @@ export default {
 }
 .currentImage {
   margin-right:90px;
-  > div {
+  > div, .slideImg {
     transition: opacity ease 500ms;
     width:100%;
     opacity: 1;
@@ -397,7 +436,11 @@ export default {
     background-position: center top;
     background-repeat: no-repeat;
     background-size: cover;
+    &.loading {
+      opacity: 0.5;
+    }
   }
+
   &.loading {
     // position:relative;
     // &:after {
@@ -435,6 +478,9 @@ export default {
 }
 .tags span:last-of-type a:last-of-type .colorSwatch {
   margin-right:0px;
+}
+a.tagLink:hover {
+font-weight:normal;
 }
 .colorSwatch {
   margin-right: 14px;

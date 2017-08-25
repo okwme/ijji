@@ -125,8 +125,8 @@ export default {
   position:fixed;
   width:100%;
   right: -100%;
-  width: 320px;
-  right:-320px;
+  width: 380px;
+  right:-380px;
   transition: right ease 500ms;
   padding: $padding+px;
   &.open {

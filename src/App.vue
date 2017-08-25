@@ -7,12 +7,14 @@
       :visible='cartVisible'></cart>
     <div class='app' :class='{cartVisible:cartVisible}' @click='cartVisible = false'>
       <toolbar 
-      @click-cart='clickCart' 
+      @click-cart='clickCart'
+      :color='color'
       :cartVisible='cartVisible'
       :cart='cart' 
       :collections='collections' 
       :product-collections='productCollections'></toolbar>
       <router-view 
+      @color-change='colorChange'
       @click-cart='clickCart'
       @update-cart='updateCart' 
       :products='products' 
@@ -32,6 +34,7 @@ export default {
   name: 'app',
   data () {
     return {
+      color: null,
       cart: {},
       cartVisible: false,
       products: [],
@@ -96,6 +99,9 @@ export default {
     this.setBreakPoints()
   },
   methods: {
+    colorChange (color) {
+      this.color = color
+    },
     keyPress (e) {
       e = e || window.event
       if (e.keyCode === 27) {
@@ -166,7 +172,7 @@ export default {
     right:0px;
     transition: right ease 500ms;
     &.cartVisible {
-      right:320px;
+      right:380px;
     }
   }
 </style>

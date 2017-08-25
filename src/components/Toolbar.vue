@@ -7,9 +7,11 @@
       <div class='col-2-3 mob-1-1'>
         <div class='collections'>
           <router-link
+          :style='colorStyle'
           data-text='All'
           to="/collections/all">All</router-link>
           <router-link
+          :style='colorStyle'
           :data-text='$parent.collectionTitle(collection.attrs.title)'
           :key='collection.attrs.title' 
           v-for='collection in productCollections' 
@@ -17,7 +19,7 @@
           v-html='$parent.collectionTitle(collection.attrs.title)'>
           </router-link>
           <a 
-          
+          :style='colorStyle'
           :data-text="'Cart ' + (items ? '(' + items + ')' : '')"
           href='#' @click.prevent='clickCart'>Cart {{items ? '(' + items + ')' : ''}}</a>
         </div>
@@ -37,6 +39,11 @@ export default {
     }
   },
   computed: {
+    colorStyle () {
+      return {
+        color: this.color
+      }
+    },
     logoCollection () {
       return this.collections.filter((collection) => {
         return collection.attrs.title === 'Logo'
@@ -65,6 +72,10 @@ export default {
     }
   },
   props: {
+    color: {
+      type: String,
+      default: null
+    },
     cartVisible: {
       type: Boolean,
       default: false
