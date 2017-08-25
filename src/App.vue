@@ -17,6 +17,7 @@
       @color-change='colorChange'
       @click-cart='clickCart'
       @update-cart='updateCart' 
+      :touchScreen='touchScreen'
       :products='products' 
       :collections='collections' 
       :cart='cart'></router-view>
@@ -45,7 +46,8 @@ export default {
       maxWidth: 1200,
       desktopWidth: 1200,
       tabletWidth: 1020,
-      mobileWidth: 480
+      mobileWidth: 480,
+      touchScreen: false
     }
   },
   components: {
@@ -73,6 +75,7 @@ export default {
     }
   },
   created () {
+    window.addEventListener('touchstart', this.addTouch)
     document.onkeydown = this.keyPress
     window.onresize = this.$debounce(this.resize, 200)
     setTimeout(() => {
@@ -99,6 +102,10 @@ export default {
     this.setBreakPoints()
   },
   methods: {
+    addTouch () {
+      this.touchScreen = true
+      window.removeEventListener('touchstart', this.addTouch)
+    },
     colorChange (color) {
       this.color = color
     },

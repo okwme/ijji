@@ -1,11 +1,13 @@
 <template>
-  <div id='product' class='grid'>
+  <div id='product' class='grid' :class="{touchScreen: touchScreen}">
     <div class='col-7-12 tab-2-3 mob-1-1'>
       <div class='currentImage hide-on-desktop' >
        <swipe
         v-on:index-update="indexChanged"
         v-if='imgs.length'
+        :indexTrigger='imageIndex'
         :auto="0"
+        :speed="200"
         :showIndicators="false"
         :style="{'height' : (maxHeight) + 'px'}"
         class="my-swipe">
@@ -128,6 +130,9 @@
 <script>
 import { Swipe, SwipeItem } from 'vue-swipe'
 require('vue-swipe/dist/vue-swipe.css')
+
+// import { Swipe, SwipeItem } from '../../../../../../vue/vue-swipe/src'
+// require('../../../../../../vue/vue-swipe/dist/vue-swipe.css')
 
 export default {
 
@@ -396,6 +401,10 @@ export default {
     }
   },
   props: {
+    touchScreen: {
+      type: Boolean,
+      default: false
+    },
     id: {
       type: String,
       default: '404'
@@ -457,6 +466,9 @@ export default {
     }
   }
 }
+.touchScreen .imageOptions > div:hover {
+    opacity: inherit;
+}
 .imageOptions {
   float:right;
   width: 69px;
@@ -480,7 +492,11 @@ export default {
   margin-right:0px;
 }
 a.tagLink:hover {
-font-weight:normal;
+  font-weight:normal;
+}
+
+.touchScreen .colorSwatch:not(:hover) {
+    border: inherit;
 }
 .colorSwatch {
   margin-right: 14px;
