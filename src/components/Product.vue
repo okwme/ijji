@@ -21,7 +21,6 @@
         </swiper>
       </div>
       <div class='imageOptions'>
-        <img v-for='(image, index) in imgs' class='invisible' :src="getImg(index)">
         <div v-for='(image, index) in imgs' :style='colorBorder' :class='{current: index === imageIndex}'>
           <a :href='image.src' @click.prevent.stop='changeIndex(index)'>
             <img :src='getImg(index)'>
@@ -372,10 +371,11 @@ export default {
       if (!this.imgs[index]) return
       var next = (this.imageIndex + 1) % this.imgs.length
       var prev = (this.imageIndex - 1)
-      prev = prev < 0 ? this.imgs.length : prev
+      prev = prev < 0 ? this.imgs.length - 1 : prev
       var main = index === this.imageIndex || index === next || index === prev
       var loaded = this.imgs[index].loaded
       var src = this.imgs[index].src
+      // console.log(this.imageIndex, index, main, next, prev)
       return main ? this.imgSize(src, loaded ? this.getSize() : '_medium') : this.imgSize(src, '_medium')
     },
     getSize () {
