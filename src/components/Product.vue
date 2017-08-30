@@ -376,7 +376,7 @@ export default {
       var loaded = this.imgs[index].loaded
       var src = this.imgs[index].src
       // console.log(this.imageIndex, index, main, next, prev)
-      return main ? this.imgSize(src, loaded ? this.getSize() : '_medium') : this.imgSize(src, '_medium')
+      return main || loaded ? this.imgSize(src, loaded ? this.getSize() : '_medium') : this.imgSize(src, '_medium')
     },
     getSize () {
       return this.imgSpace > 2048 ? '' : (this.imgSpace > 1024 ? '_2048x2048' : (this.imgSpace > 600 ? '_1024x1024' : (this.imgSpace > 480 ? '_grande' : '_large')))
