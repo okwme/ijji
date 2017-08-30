@@ -23,6 +23,10 @@ Object.defineProperty(Vue.prototype, '$debounce', { value: debounce })
 
 Vue.config.productionTip = false
 
+require('swiper/dist/css/swiper.css')
+import VueAwesomeSwiper from 'vue-awesome-swiper'
+Vue.use(VueAwesomeSwiper)
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

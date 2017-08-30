@@ -2,16 +2,12 @@
   <div id='product' class='grid' :class="{touchScreen: touchScreen}">
     <div class='col-7-12 tab-2-3 mob-1-1'>
       <div class='currentImage hide-on-desktop' >
-       <swipe
-        v-on:index-update="indexChanged"
-        v-if='imgs.length'
-        :indexTrigger='imageIndex'
-        :auto="0"
-        :speed="200"
-        :showIndicators="false"
+        <swiper 
+        :not-next-tick="true"
         :style="{'height' : (maxHeight) + 'px'}"
-        class="my-swipe">
-          <swipe-item 
+        class="my-swipe"
+        :options="swiperOption" ref="mySwiper">
+          <swiper-slide
           :style="{'height' : (maxHeight) + 'px'}"
           v-for="(image, index) in imgs" class="slide1">
             <div
@@ -21,22 +17,13 @@
               'background-image':'url(' + getImg(index) + ')',
               'height' : (maxHeight) + 'px'
             }"></div>
-          </swipe-item>
-        </swipe>
-
-<!--         <div
-        class='clicker'
-        @click='incrementPhoto()'
-        :style="{
-          'background-image':'url(' + getImg(imageIndex) + ')',
-          'height' : (maxHeight) + 'px'
-        }"></div> -->
-<!--         <img :src='getImg(imageIndex)'> -->
+          </swiper-slide>
+        </swiper>
       </div>
       <div class='imageOptions'>
         <img v-for='(image, index) in imgs' class='invisible' :src="getImg(index)">
         <div v-for='(image, index) in imgs' :style='colorBorder' :class='{current: index === imageIndex}'>
-          <a :href='image.src' @click.prevent.stop='imageIndex = index'>
+          <a :href='image.src' @click.prevent.stop='changeIndex(index)'>
             <img :src='getImg(index)'>
           </a>
         </div>
@@ -79,7 +66,9 @@
           v-html='varSize(variant)'></span>
         </span>
       </div>
-      <div  class='quantity'>
+      <div 
+      :class="{hide:  variant && !variant.available}"
+      class='quantity'>
         <span class='var-label' :style="{color: this.color + ' !important'}"><span class='hide-on-mobile'>Quantity:</span><span class='hide-on-desktop hide-on-tablet show-on-mobile'>Qty:</span></span>
         <span 
         :style="{color: this.color + ' !important'}"
@@ -91,7 +80,8 @@
         :style="{color: this.color + ' !important'}"
         class='clicker quant' @click.stop='quantity < 4 && increaseQuantity(1)'>+</span>
       </div>
-      <div class='buy-div'>
+      <div class='buy-div'
+      :class="{full:   variant && !variant.available}">
         <span
         :style="{'background-color': this.color }"
         id='addToCart' 
@@ -128,11 +118,7 @@
 </template>
 
 <script>
-import { Swipe, SwipeItem } from 'vue-swipe'
-require('vue-swipe/dist/vue-swipe.css')
-
-// import { Swipe, SwipeItem } from '../../../../../../vue/vue-swipe/src'
-// require('../../../../../../vue/vue-swipe/dist/vue-swipe.css')
+import { swiper, swiperSlide } from 'vue-awesome-swiper'
 
 export default {
 
@@ -145,12 +131,22 @@ export default {
       imgs: [],
       variantKey: 2,
       staticQuantity: 1,
-      showBIS: true
+      // showBIS: true,
+      swiperOption: {
+        initialSlide: 1,
+        direction: 'horizontal',
+        loop: true,
+        loopedSlides: 1,
+        onSlideChangeEnd: (swiper) => {
+          var foo = (swiper.activeIndex - 1) % this.imgs.length
+          this.imageIndex = foo < 0 ? this.imgs.length - 1 : foo
+        }
+      }
     }
   },
   components: {
-    'swipe': Swipe,
-    'swipe-item': SwipeItem
+    swiper,
+    swiperSlide
   },
   mounted () {
     this.setImgs()
@@ -160,8 +156,8 @@ export default {
   },
   watch: {
     imageIndex () {
-      if (this.imgs[this.imageIndex] && !this.imgs[this.imageIndex].loaded) {
-        this.load(this.imageIndex)
+      if (this.imgs[this.imageIndex % this.imgs.length] && !this.imgs[this.imageIndex % this.imgs.length].loaded) {
+        this.load(this.imageIndex % this.imgs.length)
       }
     },
     product () {
@@ -182,6 +178,9 @@ export default {
     }
   },
   computed: {
+    swiper () {
+      return this.$refs.mySwiper.swiper
+    },
     BIS () {
       if (!this.product) return
       var item = JSON.parse(JSON.stringify(this.product.attrs))
@@ -209,7 +208,7 @@ export default {
       }
     },
     buyText () {
-      return this.variant && (!this.variant.available ? 'notify me when it\'s back' : (!this.inCart ? 'Add To Cart' : 'Remove From Cart'))
+      return this.variant && (!this.variant.available ? 'email me when it\'s back' : (!this.inCart ? 'Add To Cart' : 'Remove From Cart'))
     },
     variant () {
       return this.product && this.product.attrs.variants.filter((variant, index) => {
@@ -282,12 +281,13 @@ export default {
     }
   },
   methods: {
-    indexChanged (newIndex) {
-      this.imageIndex = newIndex
+    changeIndex (index) {
+      this.imageIndex = index
+      this.swiper.slideTo(this.imageIndex + 1)
     },
     incrementPhoto () {
-      this.imageIndex += 1
-      this.imageIndex = this.imageIndex % this.imgs.length
+      var foo = this.imageIndex + 1
+      this.imageIndex = foo % this.imgs.length
     },
     increaseQuantity (amount) {
       if (this.inCart) {
@@ -632,6 +632,10 @@ a.tagLink:hover {
       line-height:60px;
       padding-left:18px;
       box-shadow: 0 2px 4px 0 rgba(0,0,0,0.50);
+      z-index:3;
+      &.hide > *{
+        display: none !important;
+      }
       .var-label{
         margin-right:12px;
       }
@@ -641,6 +645,10 @@ a.tagLink:hover {
       right: 18px;
       bottom:12px;
       width:206px;
+      z-index:3;
+      &.full {
+        width:calc(100% - 36px);
+      }
       #addToCart {
         margin-bottom:0px;
       }
