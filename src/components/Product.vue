@@ -656,10 +656,10 @@ a.tagLink:hover {
   }
   &.cartVisible {
     .quantity {
-      left:-320px;
+      left:-380px;
     }
     .buy-div {
-      right: 338px;
+      right: 398px;
     }
   }
 }
