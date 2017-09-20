@@ -239,7 +239,7 @@ export default {
             handle: product.attrs.handle
           }
         })
-      })
+      }).slice(0, 1)
     },
     colorBorder () {
       return {

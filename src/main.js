@@ -5,17 +5,17 @@ import App from './App'
 import router from './router'
 var ShopifyBuy = require('../node_modules/shopify-buy/dist/shopify-buy.umd.min.js')
 
-// var client = ShopifyBuy.buildClient({
-//   accessToken: 'bb500e2b8aadb0af601f7aa9e0cc7292',
-//   appId: 6,
-//   domain: 'ijjico.myshopify.com'
-// })
-
 var client = ShopifyBuy.buildClient({
-  accessToken: '6913fc35300008e6bbd8b5bd714b86ac',
+  accessToken: 'bb500e2b8aadb0af601f7aa9e0cc7292',
   appId: 6,
-  domain: 'ijji-store.myshopify.com'
+  domain: 'ijjico.myshopify.com'
 })
+
+// var client = ShopifyBuy.buildClient({
+//   accessToken: '6913fc35300008e6bbd8b5bd714b86ac',
+//   appId: 6,
+//   domain: 'ijji-store.myshopify.com'
+// })
 Object.defineProperty(Vue.prototype, '$client', { value: client })
 
 var debounce = require('debounce')
