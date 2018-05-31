@@ -35,7 +35,7 @@ export default {
   },
   computed: {
     navs () {
-      return ['About', 'Contact', 'Shipping', 'Returns']
+      return ['About', 'Contact', 'Shipping', 'Returns', 'Privacy', 'Terms of Service']
       // return this.collections && this.collections.filter((collection) => {
       //   console.log(collection.attrs.title)
       //   var found = names.findIndex((name) => {

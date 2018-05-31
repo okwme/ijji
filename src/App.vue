@@ -90,13 +90,13 @@ export default {
     })
     this.$client.fetchAllCollections().then((collections) => {
       this.collections.push(...collections)
-      this.collections.forEach((collection, i) => {
-        this.$client.fetchQueryProducts({collection_id: collection.attrs.collection_id}).then(products => {
-          collection.attrs.products = products
-          this.collections.splice(i, 1, collection)
-          this.addCollectionToProducts(products, collection)
-        })
-      })
+      // this.collections.forEach((collection, i) => {
+      //   this.$client.fetchQueryProducts({collection_id: collection.attrs.collection_id}).then(products => {
+      //     collection.attrs.products = products
+      //     this.collections.splice(i, 1, collection)
+      //     this.addCollectionToProducts(products, collection)
+      //   })
+      // })
     })
   },
   mounted () {
