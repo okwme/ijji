@@ -14,7 +14,7 @@
             <router-link :to="'/product/' + item.variant.product.id">
               <div class='item-title'>{{item.title}}</div>
             </router-link>
-             <div class='w-inv'>
+          <div class='w-inv'>
             <div class='item-quantity'>
               <span class='clicker' @click='quantity(item, -1)'>-</span>
               <span>{{item.quantity}}</span>
@@ -158,6 +158,9 @@ export default {
       div {
         margin-bottom: $padding/3+px;
       }
+    }
+    .w-info {
+      max-width: calc(100% - 70px);
     }
     .w-inv {
       float:right;
