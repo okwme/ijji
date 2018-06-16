@@ -2,28 +2,29 @@
   <div id='cart' :class='{open:visible}'>
     <h1>Cart ({{count}})</h1>
     <a id='closeCart' href='#' @click.prevent='clickCart'>&#xd7;</a>
-    <div v-if='cart && cart.attrs && cart.attrs.line_items.length'>
-      <div class='line-item' v-for='item in cart.attrs.line_items'>
+    <div v-if='cart.lineItems && cart.lineItems.length'>
+      <div class='line-item' v-for='item in cart.lineItems'>
           <!--<div class='clicker' @click='removeItem(item)'>X</div>--> 
           <div class='w-img'>
-            <router-link :to="'/product/' + item.product_id">
-              <img :src='getSmall(item.image.src)'>
+            <router-link :to="'/product/' + item.variant.product.id">
+              <img :src='getSmall(item.variant.image.src)'>
             </router-link>
           </div>
           <div class='w-info'>
-            <router-link :to="'/product/' + item.product_id">
+            <router-link :to="'/product/' + item.variant.product.id">
               <div class='item-title'>{{item.title}}</div>
             </router-link>
-            <div class='item-variant-title'>{{item.variant_title}}</div>
-            <div class='item-price'>${{item.price}}</div>
-          </div>
-          <div class='w-inv'>
+             <div class='w-inv'>
             <div class='item-quantity'>
               <span class='clicker' @click='quantity(item, -1)'>-</span>
               <span>{{item.quantity}}</span>
               <span class='clicker' @click='quantity(item, 1)'>+</span>
             </div>
           </div>
+            <div class='item-variant-title'>{{item.variant.title}}</div>
+            <div class='item-price'>${{item.variant.price}}</div>
+          </div>
+         
           <div class='clear-both'></div>
       </div>
       <div class='mb6'>
@@ -31,7 +32,7 @@
         <div class='right'>${{total}}</div>
         <div class='clear-both'></div>
       </div>
-      <a class='checkoutButton' target='_blank' :href='cart.checkoutUrl'>Checkout</a>
+      <a class='checkoutButton' target='_blank' :href='cart.webUrl'>Checkout</a>
     </div>
     <div v-else>
     Cart is empty
@@ -46,7 +47,8 @@ export default {
 
   data () {
     return {
-      specialInstructions: ''
+      specialInstructions: '',
+      dontClick: false
     }
   },
   props: {
@@ -57,13 +59,17 @@ export default {
     cart: {
       type: Object,
       default: {}
+    },
+    checkoutId: {
+      type: String,
+      default: null
     }
   },
   computed: {
     count () {
-      if (this.cart.attrs && this.cart.attrs.line_items.length) {
+      if (this.cart.lineItems && this.cart.lineItems.length) {
         var count = 0
-        var items = this.cart.attrs.line_items
+        var items = this.cart.lineItems
         for (var i = 0; i < items.length; i++) {
           count += items[i].quantity
         }
@@ -73,19 +79,25 @@ export default {
       }
     },
     total () {
-      if (!this.cart) return
+      if (!this.cart.lineItems) return
       var total = 0
-      for (var i = 0; i < this.cart.attrs.line_items.length; i++) {
-        var item = this.cart.attrs.line_items[i]
-        total += item.quantity * parseFloat(item.price)
+      for (var i = 0; i < this.cart.lineItems.length; i++) {
+        var item = this.cart.lineItems[i]
+        total += item.quantity * parseFloat(item.variant.price)
       }
       return total.toFixed(2)
     }
   },
   methods: {
     quantity (item, amount) {
+      if (this.dontClick) return
       if (item.quantity > 3 && amount > 0) return
-      this.cart.updateLineItem(item['shopify-buy-uuid'], (item.quantity + amount))
+      const lineItems = [{id: item.id, quantity: item.quantity + amount}]
+      this.dontClick = true
+      this.$client.checkout.updateLineItems(this.checkoutId, lineItems).then((cart) => {
+        this.dontClick = false
+        this.$emit('update-cart', cart)
+      })
     },
     getSmall (src) {
       return src.replace('.jpg', '_small.jpg')
@@ -105,9 +117,9 @@ export default {
       this.$emit('click-cart')
     },
     removeItem (item) {
-      this.cart.removeLineItem(item['shopify-buy-uuid']).then((cart) => {
-        this.$emit('update-cart', cart)
-      })
+      // this.cart.removeLineItem(item['shopify-buy-uuid']).then((cart) => {
+      //   this.$emit('update-cart', cart)
+      // })
     }
   }
 }

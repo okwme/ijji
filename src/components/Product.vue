@@ -8,6 +8,7 @@
         class="my-swipe"
         :options="swiperOption" ref="mySwiper">
           <swiper-slide
+          :key="'asdf1' + index"
           :style="{'height' : (maxHeight) + 'px'}"
           v-for="(image, index) in imgs" class="slide1">
             <div
@@ -21,7 +22,7 @@
         </swiper>
       </div>
       <div class='imageOptions'>
-        <div v-for='(image, index) in imgs' :style='colorBorder' :class='{current: index === imageIndex}'>
+        <div v-for='(image, index) in imgs' :style='colorBorder' :key="'asdf2' + index" :class='{current: index === imageIndex}'>
           <a :href='image.src' @click.prevent.stop='changeIndex(index)'>
             <img :src='getImg(index)'>
           </a>
@@ -40,10 +41,10 @@
     </div>
     <div class='col-1-12 tab-0 mob-0'></div>
     <div class='col-1-3 tab-1-3 mob-1-1 product-stats' >
-      <h1 :style="{color: this.color + ' !important'}">{{product && product.attrs.title}} – {{product && product.attrs.variants[0].formatted_price}}</h1>
+      <h1 :style="{color: this.color + ' !important'}">{{product && product.title}} – ${{product && product.variants[0].price}}</h1>
       <div class='tags' v-if='tags'>
         <span class='var-label' :style="{color: this.color + ' !important'}">Color:</span>
-        <span v-for='tag in tags'>
+        <span v-for='(tag, index) in tags' :key="'asdf3' + index">
           <router-link class='tagLink' @click.native.stop="" v-for='link in tag' :key='link.id' :to='"/product/" + link.handle'>
             <div class='colorSwatch clicker' :class='isSelected(link)' :style='border(link.color)'>
               <div :style='bg(link.color)'></div>
@@ -51,9 +52,9 @@
           </router-link>
         </span>
       </div>
-      <div class='variants' v-if='product && product.attrs.variants.length'>
+      <div class='variants' v-if='product && product.variants.length'>
         <span class='var-label' :style="{color: this.color + ' !important'}">Size:</span>
-        <span v-for='variant, index in product.attrs.variants'>
+        <span v-for='variant, index in product.variants' :key="'asdf4' + index">
           <span 
           class='sizeVariant clicker'
           :style="{
@@ -161,7 +162,7 @@ export default {
     },
     product () {
       if (this.product && !isNaN(this.id)) {
-        this.$router.push('/product/' + this.product.attrs.handle)
+        this.$router.push('/product/' + this.product.handle)
       }
       this.setImgs()
     },
@@ -182,22 +183,28 @@ export default {
     },
     BIS () {
       if (!this.product) return
-      var item = JSON.parse(JSON.stringify(this.product.attrs))
-      item.id = item.product_id
+      var item = JSON.parse(JSON.stringify(this.product))
+      try {
+        var decodedData = window.atob(item.id)
+        item.id = decodedData.split('/').pop()
+      } catch (error) {
+        console.log(error)
+        return
+      }
       var v = JSON.parse(JSON.stringify(this.variant))
       if (!v.available) v.inventory_quantity = 0
       v.inventory_management = 'shopify'
-      v.option_values.map((option, index) => {
+      v.selectedOptions.map((option, index) => {
         v['option' + (index + 1)] = option.value
         return option.value
       })
-      v.option = v.option_values
+      v.option = v.selectedOptions
       item.variants = [v]
       return JSON.stringify(item)
     },
     whichText () {
       if (!this.product) return
-      var foo = this.product.attrs.body_html.split('<table')
+      var foo = this.product.descriptionHtml.split('<table')
 
       if (this.textView === 0 || foo.length === 1) {
         return foo[0]
@@ -210,13 +217,13 @@ export default {
       return this.variant && (!this.variant.available ? 'email me when it\'s back' : (!this.inCart ? 'Add To Cart' : 'Remove From Cart'))
     },
     variant () {
-      return this.product && this.product.attrs.variants.filter((variant, index) => {
+      return this.product && this.product.variants.filter((variant, index) => {
         return index === this.variantKey
       }).pop()
     },
     inCart () {
-      return this.variant && this.cart.attrs && this.cart.attrs.line_items.filter(item => {
-        return item.variant_id === this.variant.id
+      return this.variant && this.cart.lineItems && this.cart.lineItems.filter(item => {
+        return item.variant_id === this.variant.id // come back here
       }).pop()
     },
     quantity () {
@@ -224,19 +231,22 @@ export default {
     },
     product () {
       return this.products.filter((p) => {
-        return p.attrs.product_id === parseInt(this.id) || p.attrs.handle === this.id
+        return p.id === this.id || p.handle === this.id
       }).pop()
     },
+    collection () {
+      return this.collections.filter((c) => c.products.find((p) => p.id === this.product.id))
+    },
     color () {
-      return this.product && this.product.attrs.tags
+      return this.product && this.product.tags && this.product.tags[0].value
     },
     tags () {
-      return this.product && this.product.attrs.collections && this.product.attrs.collections.map((collection) => {
-        return collection.attrs.products && collection.attrs.products.map((product) => {
+      return this.collection && this.collections.map((collection) => {
+        return collection.products && collection.products.map((product) => {
           return {
-            color: product.attrs.tags,
-            id: product.attrs.product_id,
-            handle: product.attrs.handle
+            color: product.tags,
+            id: product.id,
+            handle: product.handle
           }
         })
       }).slice(0, 1)
@@ -303,8 +313,8 @@ export default {
           this.$emit('update-cart', cart)
         })
       } else {
-        var buy = {variant: this.product.variants[this.variantKey], quantity: this.quantity}
-        this.cart.createLineItemsFromVariants(buy).then((cart) => {
+        var buy = {variantId: this.product.variants[this.variantKey].id, quantity: this.quantity}
+        this.$client.checkout.addLineItems(this.checkoutId, buy).then((cart) => {
           this.$emit('update-cart', cart)
           this.$emit('click-cart', true)
         })
@@ -312,18 +322,18 @@ export default {
       this.staticQuantity = 1
     },
     varSize (variant) {
-      return variant.option_values.filter((option) => {
+      return variant.selectedOptions.filter((option) => {
         return option.name === 'Size'
       })[0].value
     },
     setImgs () {
-      if (this.product && this.product.attrs.images) {
+      if (this.product && this.product.images) {
         this.imageIndex = 0
         this.imgs.splice(0, this.imgs.length)
         this.$nextTick(function () {
           this.imageIndex = 0
           this.imgs.splice(0, this.imgs.length)
-          var images = this.product.attrs.images
+          var images = this.product.images
           for (var i = 0; i < images.length; i++) {
             var img = images[i]
             this.imgs.push({
@@ -413,9 +423,17 @@ export default {
       type: Array,
       default: []
     },
+    collections: {
+      type: Array,
+      default: []
+    },
     cart: {
       type: Object,
       default: {}
+    },
+    checkoutId: {
+      type: String,
+      default: null
     }
   }
 }
@@ -582,6 +600,9 @@ a.tagLink:hover {
       display: inline-block;
       margin-right:12px;
       margin-bottom:12px;
+      &:not(.current) {
+        border:2px solid transparent !important;
+      }
     }
   }
 }

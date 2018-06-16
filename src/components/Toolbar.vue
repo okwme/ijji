@@ -12,11 +12,11 @@
           to="/collections/all">All</router-link>
           <router-link
           :style='colorStyle'
-          :data-text='$parent.collectionTitle(collection.attrs.title)'
-          :key='collection.attrs.title' 
+          :data-text='$parent.collectionTitle(collection.title)'
+          :key='collection.title' 
           v-for='collection in productCollections' 
-          :to="'/collections/' + $parent.collectionTitle(collection.attrs.title)"
-          v-html='$parent.collectionTitle(collection.attrs.title)'>
+          :to="'/collections/' + $parent.collectionTitle(collection.title)"
+          v-html='$parent.collectionTitle(collection.title)'>
           </router-link>
           <a 
           :style='colorStyle'
@@ -46,16 +46,16 @@ export default {
     },
     logoCollection () {
       return this.collections.filter((collection) => {
-        return collection.attrs.title === 'Logo'
+        return collection.title === 'Logo'
       }).pop()
     },
     logo () {
-      return this.logoCollection && this.logoCollection.attrs.image.src
+      return this.logoCollection && this.logoCollection.image.src
     },
     items () {
-      if (this.cart.attrs && this.cart.attrs.line_items.length) {
+      if (this.cart.lineItems && this.cart.lineItems.length) {
         var count = 0
-        var items = this.cart.attrs.line_items
+        var items = this.cart.lineItems
         for (var i = 0; i < items.length; i++) {
           count += items[i].quantity
         }
@@ -73,6 +73,10 @@ export default {
   },
   props: {
     color: {
+      type: String,
+      default: null
+    },
+    checkoutId: {
       type: String,
       default: null
     },

@@ -34,11 +34,11 @@ export default {
     },
     landing () {
       return this.collections.filter((collection) => {
-        return collection.attrs.title === 'Landing'
+        return collection.title === 'Landing'
       }).pop()
     },
     landingImg () {
-      return this.landing && (this.imgLoaded ? this.landing.attrs.image.src : this.landing.attrs.image.src.replace('.jpg', '_small.jpg'))
+      return this.landing && (this.imgLoaded ? this.landing.image.src : this.landing.image.src.replace('.jpg', '_small.jpg'))
     }
   },
   methods: {
@@ -48,7 +48,7 @@ export default {
         img.onload = () => {
           this.imgLoaded = true
         }
-        img.src = this.landing.attrs.image.src
+        img.src = this.landing.image.src
       }
     }
   }

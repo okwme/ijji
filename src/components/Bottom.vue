@@ -2,13 +2,13 @@
   <div id='footer'>
     <div class=' grid' >
       <div class='col-1-1'>
-        <div class='banner ' v-html='banner && banner.attrs.body_html'></div>
+        <div class='banner ' v-html='banner && banner.descriptionHtml'></div>
       </div>
     </div>
     <div class='grid'>
       <div class='collections col-1-6 mob-1-3'>
         <div v-for='collection in productCollections'>
-          <router-link :to="'/collections/' + $parent.collectionTitle(collection.attrs.title)">{{$parent.collectionTitle(collection.attrs.title)}}</router-link>
+          <router-link :to="'/collections/' + $parent.collectionTitle(collection.title)">{{$parent.collectionTitle(collection.title)}}</router-link>
         </div>
       </div>
       <div class='links col-1-6 mob-1-3'>
@@ -16,9 +16,9 @@
           <router-link :to="'/pages/' + nav">{{nav}}</router-link>
         </div>
       </div>
-      <div class='links col-1-6 mob-1-3' v-html='social && social.attrs.body_html'></div>
+      <div class='links col-1-6 mob-1-3' v-html='social && social.descriptionHtml'></div>
       <div class='col-1-12 tab-0'>&nbsp;</div>
-      <div class='mailchimp col-5-12 tab-1-2 mob-1-1' v-html='mailchimp && mailchimp.attrs.body_html'></div>
+      <div class='mailchimp col-5-12 tab-1-2 mob-1-1' v-html='mailchimp && mailchimp.descriptionHtml'></div>
     </div>
   </div>
 </template>
@@ -37,9 +37,9 @@ export default {
     navs () {
       return ['About', 'Contact', 'Shipping', 'Returns', 'Privacy', 'Terms of Service']
       // return this.collections && this.collections.filter((collection) => {
-      //   console.log(collection.attrs.title)
+      //   console.log(collection.title)
       //   var found = names.findIndex((name) => {
-      //     return collection.attrs.title === name
+      //     return collection.title === name
       //   })
       //   console.log(found)
       //   return found > -1
@@ -47,17 +47,17 @@ export default {
     },
     banner () {
       return this.collections && this.collections.filter((collection) => {
-        return collection.attrs.title === 'Banner'
+        return collection.title === 'Banner'
       }).pop()
     },
     social () {
       return this.collections && this.collections.filter((collection) => {
-        return collection.attrs.title === 'Social Links'
+        return collection.title === 'Social Links'
       }).pop()
     },
     mailchimp () {
       return this.collections && this.collections.filter((collection) => {
-        return collection.attrs.title === 'Mailchimp'
+        return collection.title === 'Mailchimp'
       }).pop()
     }
   },

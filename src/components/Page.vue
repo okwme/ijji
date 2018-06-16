@@ -6,7 +6,7 @@
     </div>
     <div class='page' v-if='collections.length && currPage'>
       <h1 class='center'>{{id}}</h1>
-      <div  v-html='currPage.attrs.body_html'></div>
+      <div  v-html='currPage.descriptionHtml'></div>
     </div>
   </div>
 </div>
@@ -25,7 +25,7 @@ export default {
   computed: {
     currPage () {
       return this.collections.filter((c) => {
-        return c.attrs.title === this.id
+        return c.title === this.id
       }).pop()
     }
   },

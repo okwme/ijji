@@ -4,12 +4,14 @@
       @update-cart='updateCart'
       @click-cart='clickCart' 
       :cart='cart' 
+      :checkoutId='checkoutId'
       :visible='cartVisible'></cart>
     <div class='app' :class='{cartVisible:cartVisible}' @click='cartVisible = false'>
       <toolbar 
       @click-cart='clickCart'
       :color='color'
       :cartVisible='cartVisible'
+      :checkoutId='checkoutId'
       :cart='cart' 
       :collections='collections' 
       :product-collections='productCollections'></toolbar>
@@ -20,6 +22,7 @@
       :touchScreen='touchScreen'
       :products='products' 
       :collections='collections' 
+      :checkoutId='checkoutId'
       :cart='cart'></router-view>
       <bottom :collections='collections' :product-collections='productCollections'></bottom>
       <div id='desktopWidth'></div><div id='tabletWidth'></div><div id='mobileWidth'></div>
@@ -37,6 +40,7 @@ export default {
     return {
       color: null,
       cart: {},
+      checkoutId: null,
       cartVisible: false,
       products: [],
       collections: [],
@@ -67,37 +71,37 @@ export default {
   computed: {
     productCollections () {
       return this.collections.filter((collection) => {
-        var prefix = collection.attrs.title.split('-')[0]
+        var prefix = collection.title.split('-')[0]
         return this.isNumber(prefix)
       }).sort((a, b) => {
-        return a.attrs.title.localeCompare(b.attrs.title)
+        return a.title.localeCompare(b.title)
       })
     }
   },
-  created () {
-    this.addBackInStock()
-    window.addEventListener('touchstart', this.addTouch)
-    document.onkeydown = this.keyPress
-    window.onresize = this.$debounce(this.resize, 200)
-    setTimeout(() => {
-      this.resize()
-    }, 500)
-    this.$client.fetchAllProducts().then((products) => {
+  async created () {
+    try {
+      this.addBackInStock()
+      window.addEventListener('touchstart', this.addTouch)
+      document.onkeydown = this.keyPress
+      window.onresize = this.$debounce(this.resize, 200)
+      setTimeout(() => {
+        this.resize()
+      }, 500)
+      let products = await this.$client.product.fetchAll()
       this.products.push(...products)
-    })
-    this.$client.fetchRecentCart().then((cart) => {
-      this.cart = cart
-    })
-    this.$client.fetchAllCollections().then((collections) => {
+      this.checkoutId = localStorage.getItem('checkoutId')
+      if (!this.checkoutId) {
+        let checkout = await this.$client.checkout.create()
+        this.checkoutId = checkout.id
+        localStorage.setItem('checkoutId', this.checkoutId) // Store the ID in localStorage
+      }
+      this.cart = await this.$client.checkout.fetch(this.checkoutId)
+
+      let collections = await this.$client.collection.fetchAllWithProducts()
       this.collections.push(...collections)
-      // this.collections.forEach((collection, i) => {
-      //   this.$client.fetchQueryProducts({collection_id: collection.attrs.collection_id}).then(products => {
-      //     collection.attrs.products = products
-      //     this.collections.splice(i, 1, collection)
-      //     this.addCollectionToProducts(products, collection)
-      //   })
-      // })
-    })
+    } catch (error) {
+      console.log(error)
+    }
   },
   mounted () {
     this.setBreakPoints()
@@ -154,20 +158,6 @@ export default {
     },
     isNumber (string) {
       return !isNaN(parseFloat(string)) && isFinite(string)
-    },
-    addCollectionToProducts (products, collection) {
-      products.forEach(product => {
-        var productIndex = this.products.findIndex((p) => {
-          return p.attrs.product_id === product.attrs.product_id
-        })
-        product = productIndex > -1 && this.products[productIndex]
-        if (product.attrs.collections) {
-          product.attrs.collections.push(collection)
-        } else {
-          product.attrs.collections = [collection]
-        }
-        this.products.splice(productIndex, 1, product)
-      })
     }
   }
 }

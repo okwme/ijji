@@ -3,8 +3,8 @@
     <div v-if='products && products.length && productsFiltered && !productsFiltered.length'>
       <h1 class='center'>More products coming soon</h1>
     </div>
-    <div class='col-1-3 tab-1-2 mob-1-1'  v-for='product, i in productsFiltered'>
-      <router-link :to='"/product/" + product.attrs.handle'>
+    <div class='col-1-3 tab-1-2 mob-1-1'  v-for='product, i in productsFiltered' :key="i">
+      <router-link :to='"/product/" + product.handle'>
         <div>
           <div class='collection-bg'
           :class="{loading: imgs[i] && !imgs[i].loaded}"
@@ -13,7 +13,7 @@
             'height' : (maxHeight) + 'px'
           }"></div>
           <div>
-          {{product.attrs.title}} &nbsp;–&nbsp; {{getPrice(product)}}
+          {{product.title}} &nbsp;–&nbsp; ${{getPrice(product)}}
           </div>
         </div>
         <!-- <pre>{{product.attrs}}</pre> -->
@@ -38,11 +38,11 @@ export default {
   computed: {
     currCollection () {
       return this.collections.filter((c) => {
-        return this.$parent.collectionTitle(c.attrs.title) === this.id
+        return this.$parent.collectionTitle(c.title) === this.id
       })
     },
     productsFiltered () {
-      return this.id === 'all' ? this.products : !!this.currCollection.length && this.currCollection[0].attrs.products
+      return this.id === 'all' ? this.products : !!this.currCollection.length && this.currCollection[0].products
     },
     imgSpace () {
       var w = this.$parent.window > this.$parent.maxWidth ? this.$parent.maxWidth : this.$parent.window
@@ -94,10 +94,10 @@ export default {
       }
     },
     getPrice (product) {
-      return product.attrs.variants.length && product.attrs.variants[0].formatted_price
+      return product.variants.length && product.variants[0].price
     },
     getImage (product, size = this.imgSize) {
-      return product.attrs.images.length && product.attrs.images[0].src.replace('.jpg', size + '.jpg')
+      return product.images.length && product.images[0].src.replace('.jpg', size + '.jpg')
     },
     chooseImage (key) {
       return this.imgs[key] && (this.imgs[key].loaded ? this.imgs[key].url : this.imgs[key].small)
