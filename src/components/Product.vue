@@ -406,7 +406,7 @@ export default {
     },
     isSelected (link) {
       return {
-        selected: link.id === parseInt(this.id) || link.handle === this.id
+        selected: link.id === this.id || link.handle === this.id || link.color[0].value === this.color
       }
     }
   },
