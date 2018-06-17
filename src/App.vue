@@ -78,35 +78,39 @@ export default {
       })
     }
   },
-  async created () {
-    try {
-      this.addBackInStock()
-      window.addEventListener('touchstart', this.addTouch)
-      document.onkeydown = this.keyPress
-      window.onresize = this.$debounce(this.resize, 200)
-      setTimeout(() => {
-        this.resize()
-      }, 500)
-      let products = await this.$client.product.fetchAll()
-      this.products.push(...products)
-      this.checkoutId = localStorage.getItem('checkoutId')
-      if (!this.checkoutId) {
-        let checkout = await this.$client.checkout.create()
-        this.checkoutId = checkout.id
-        localStorage.setItem('checkoutId', this.checkoutId) // Store the ID in localStorage
-      }
-      this.cart = await this.$client.checkout.fetch(this.checkoutId)
-
-      let collections = await this.$client.collection.fetchAllWithProducts()
-      this.collections.push(...collections)
-    } catch (error) {
-      console.log(error)
-    }
+  created () {
+    this.addBackInStock()
+    window.addEventListener('touchstart', this.addTouch)
+    document.onkeydown = this.keyPress
+    window.onresize = this.$debounce(this.resize, 200)
+    setTimeout(() => {
+      this.resize()
+    }, 500)
+    this.begin()
   },
   mounted () {
     this.setBreakPoints()
   },
   methods: {
+    async begin () {
+      try {
+        let products = await this.$client.product.fetchAll()
+        this.products.push(...products)
+        this.checkoutId = localStorage.getItem('checkoutId')
+        if (!this.checkoutId) {
+          let checkout = await this.$client.checkout.create()
+          this.checkoutId = checkout.id
+          localStorage.setItem('checkoutId', this.checkoutId) // Store the ID in localStorage
+        }
+        this.cart = await this.$client.checkout.fetch(this.checkoutId)
+
+        let collections = await this.$client.collection.fetchAllWithProducts()
+        this.collections.push(...collections)
+      } catch (error) {
+        console.log(error)
+        this.begin()
+      }
+    },
     addBackInStock () {
       var s = document.createElement('script')
       s.type = 'text/javascript'
