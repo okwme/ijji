@@ -253,13 +253,13 @@ export default {
       }).pop()
     },
     collection () {
-      return this.collections.filter((c) => c.products.find((p) => p.id === this.product.id))
+      return this.collections.filter((c) => c.products.find((p) => p.id === this.product.id) && c.title.split('-').length > 1)
     },
     color () {
       return this.product && this.product.tags && this.product.tags[0].value
     },
     tags () {
-      return this.collection && this.collections.map((collection) => {
+      return this.collection && this.collection.map((collection) => {
         return collection.products && collection.products.map((product) => {
           return {
             color: product.tags,
