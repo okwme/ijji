@@ -191,16 +191,24 @@ export default {
         console.log(error)
         return
       }
+      item.options = item.options.map(o => {
+        try {
+          decodedData = window.atob(o.id)
+          o.id = decodedData.split('/').pop()
+          return o
+        } catch (error) {
+          console.log(error)
+          return
+        }
+      })
       var v = JSON.parse(JSON.stringify(this.variant))
       try {
         decodedData = window.atob(v.id)
-        console.log(decodedData)
         v.id = decodedData.split('/').pop()
       } catch (error) {
         console.log(error)
         return
       }
-      console.log(v)
 
       if (!v.available) v.inventory_quantity = 0
       v.inventory_management = 'shopify'
