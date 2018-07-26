@@ -96,6 +96,7 @@ input {
     display: none;
   }
 }
+
 @media only screen and (max-width : $mobile-max-width) {
   .show-on-mobile {
     display: inherit;

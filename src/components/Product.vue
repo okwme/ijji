@@ -150,6 +150,7 @@ export default {
   },
   mounted () {
     this.setImgs()
+    this.$emit('color-change', this.color)
   },
   destroyed () {
     this.$emit('color-change', null)

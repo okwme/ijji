@@ -168,4 +168,20 @@ export default {
       }
     }
   }
+  @media only screen and (min-width : $max-width) {
+
+    #toolbar {
+      margin-top:0px;
+      .collections {
+        position: absolute;
+        top:48px;
+        right:20px;
+      }
+      #index {
+        position: absolute;
+        top:48px;
+        left:20px;
+      }
+    }
+  }
 </style>
