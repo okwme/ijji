@@ -57,8 +57,6 @@ export default {
 
 <style lang="scss" scoped>
   @import "../sass/vars";
-  
-  #toolbar a { color: #fff }
 
   #home {
     min-height:100vh;
