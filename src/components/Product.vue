@@ -654,10 +654,6 @@ a.tagLink:hover {
     .sizeVariant{
       margin-right:12px;
     }
-    .tags, .variants {
-      width:calc(50% - 2px);
-      display:inline-block;
-    }
     .quantity, .buy-div {
       position:fixed;
       bottom:0px;
