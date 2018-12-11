@@ -434,6 +434,8 @@ export default {
       }
     },
     isSelected (link) {
+      console.log(link, this.id, this.color)
+
       return {
         selected: link.id === this.id || link.handle === this.id || link.color[0].value === this.color
       }
