@@ -91,24 +91,29 @@
         @click.prevent='addToCart'
         v-html='buyText'></span>
       </div>
+      <div @click='measurements = 1' class='measurements-button' :style="{border: '2px solid ' + this.color, color: this.color + ' !important'}">Measurements</div>
       <div class='text-div'>
-        <div class='textChoices'>
+        <!-- <div class='textChoices'>
           <span
           class='clicker'
           :style="{
             'color': textView === 0 ? 'white' : this.color,
             'background-color': textView === 0 ? this.color : ''}"
           @click='textView = 0'>Details</span>
-          <span
-          class='clicker'
-          :style="{
-            'color': textView === 1 ? 'white' : this.color,
-            'background-color': textView === 1 ? this.color : ''}"
-          @click='textView = 1'>Measurements</span>
-        </div>
+        </div> -->
         <div
-        :style="{color: this.color + ' !important'}"
-        v-html='whichText'></div>
+        :style="{color: this.color + ' !important'}" v-html='showDescription'></div>
+        <!-- <div v-html='showMeasurements' style='display: none'></div> -->
+        <transition name="fade-in">
+        <div class='measurements-modal' @click='measurements = 0' v-if='measurements == 1'>
+          <div @click='measurements = 1'>
+            <div v-html='showImage' class="measurements-modal-img"></div>
+            <!-- <div class='hide-mobile col-1-12 mob-0-0'></div> -->
+            <!-- <div class='col-4-12 mob-1-1 measurements-modal-text' v-html='showMeasurements' :style="{color: this.color + ' !important'}"></div> -->
+            <div class='col-1-12 measurements-modal-x' @click='measurements = 0'><img src="https://icongr.am/feather/x.svg?color=111111"/></div>
+          </div>
+        </div>
+        </transition>
       </div>
     </div>
     <div class='col-1-1'>
@@ -126,7 +131,7 @@ export default {
 
   data () {
     return {
-      textView: 0,
+      measurements: 0,
       imageIndex: 0,
       imgs: [],
       variantKey: 2,
@@ -221,16 +226,20 @@ export default {
       item.variants = [v]
       return JSON.stringify(item)
     },
-    whichText () {
-      if (!this.product) return
-      var foo = this.product.descriptionHtml.split('<table')
-
-      if (this.textView === 0 || foo.length === 1) {
-        return foo[0]
-      } else {
-        foo[1] = '<table' + foo[1]
-        return foo[1]
-      }
+    // showMeasurements () {
+    //   if (!this.product) return
+    //   if (this.measurements === 1) {
+    //     document.body.className = 'modalOpen'
+    //     return '<table' + this.product.descriptionHtml.split('<table')[1].split('<img')[0]
+    //   } else if (this.measurements === 0) {
+    //     document.body.className = ''
+    //   }
+    // },
+    showImage () {
+      return this.product.descriptionHtml.split('<table')[0].split('<img')[1] ? '<img' + this.product.descriptionHtml.split('<table')[0].split('<img')[1] : 'no measurements available'
+    },
+    showDescription () {
+      return this.product && this.product.descriptionHtml.split('<table')[0].split('<img')[0]
     },
     buyText () {
       return this.variant && (!this.variant.available ? 'email me when it\'s back' : (!this.inCart ? 'Add To Cart' : 'Remove From Cart'))
@@ -256,19 +265,20 @@ export default {
     collection () {
       return this.collections.filter((c) => c.products.find((p) => p.id === this.product.id) && c.title.split('-').length > 1)
     },
+    colorcollection () {
+      return this.products.filter((p) => p.title.split('-')[0] === this.product.title.split('-')[0])
+    },
     color () {
       return this.product && this.product.tags && this.product.tags[0].value
     },
     tags () {
-      return this.collection && this.collection.map((collection) => {
-        return collection.products && collection.products.map((product) => {
-          return {
-            color: product.tags,
-            id: product.id,
-            handle: product.handle
-          }
-        })
-      }).slice(0, 1)
+      return [this.colorcollection.map(product => {
+        return {
+          color: product.tags,
+          id: product.id,
+          handle: product.handle
+        }
+      })]
     },
     colorBorder () {
       return {
@@ -461,6 +471,16 @@ export default {
 <style lang="scss" >
 @import "../sass/vars";
 
+.fade-in-enter-active {
+  transition: all .4s ease;
+}
+.fade-in-leave-active {
+  transition: all .4s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.fade-in-enter, .fade-in-leave-to {
+  opacity: 0;
+}
+
 #product {
   padding-top:168px;
   min-height:80vh;
@@ -505,6 +525,9 @@ export default {
 }
 .touchScreen .imageOptions > div:hover {
     opacity: inherit;
+}
+.modalOpen {
+  overflow: hidden;
 }
 .imageOptions {
   float:right;
@@ -576,6 +599,53 @@ a.tagLink:hover {
     color: white;
   }
 }
+.measurements-button {
+  display: inline-block;
+  text-transform: uppercase;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+  line-height: 36px;
+}
+.measurements-modal {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  position: fixed;
+  overflow: hidden;
+  background: rgba(255,255,255,.8);
+  z-index: 99;
+  display: flex;
+  align-items: center;
+  justify-content: center;  
+  >div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 2px solid black;
+    width: 60%;
+    height: 80%;
+    position: relative;
+  }
+  &-img {
+    height: 100%;
+    display: flex;
+    img {
+      height: 100%;
+    }
+  }
+  &-x {
+    align-self: flex-start;
+    text-align:right;
+    padding: 15px;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+}
 .variants span:last-of-type .sizeVariant {
   margin-right:0;
 }
@@ -586,7 +656,7 @@ a.tagLink:hover {
   width:100%;
   display: block;
   text-align:center;
-  margin-bottom:36px;
+  margin-bottom:24px;
   text-transform: uppercase;
 }
 .textChoices {
@@ -626,6 +696,9 @@ a.tagLink:hover {
   }
 }
 @media only screen and (max-width : $mobile-max-width) {
+  .hidemobile {
+    display: none !important;
+  }
   #product {
     padding-top:204px;
   }
@@ -636,6 +709,30 @@ a.tagLink:hover {
     > div {
       width:36px;
       height:36px;
+    }
+  }
+  .measurements-modal {
+    >div {
+      width: 100%;
+      height: 100%;
+      flex-direction: column;
+      justify-content: space-around;
+    }
+    &-x {
+        padding: 0;
+        position: absolute;
+        top: 20px;
+        right: 16px;
+    }
+    &-img {
+      display: block;
+      height: initial;
+      img {
+        height: initial;
+      }
+    }
+    &-text {
+      text-align: center;
     }
   }
   .colorSwatch {

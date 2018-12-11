@@ -3,7 +3,7 @@
     <div v-if='products && products.length && productsFiltered && !productsFiltered.length'>
       <h1 class='center'>More products coming soon</h1>
     </div>
-    <div class='col-1-3 tab-1-2 mob-1-1'  v-for='product, i in productsFiltered' :key="i">
+    <div class='col-1-3 tab-1-2 mob-1-1' v-for='product, i in productsFiltered' :key="i">
       <router-link :to='"/product/" + product.handle'>
         <div>
           <div class='collection-bg'
@@ -12,7 +12,7 @@
             'background-image':'url(' + chooseImage(i)+ ')',
             'height' : (maxHeight) + 'px'
           }"></div>
-          <div>
+          <div class="product-title">
           {{product.title}} &nbsp;–&nbsp; ${{getPrice(product)}}
           </div>
         </div>
@@ -34,15 +34,20 @@ export default {
   },
   mounted () {
     this.setImgs()
+    this.$emit('color-change', this.color)
+  },
+  destroyed () {
+    this.$emit('color-change', null)
   },
   computed: {
     currCollection () {
       return this.collections.filter((c) => {
+        console.log(this.id, c)
         return this.$parent.collectionTitle(c.title) === this.id
       })
     },
     productsFiltered () {
-      return this.id === 'all' ? this.products : !!this.currCollection.length && this.currCollection[0].products
+      return !!this.currCollection.length && this.currCollection[0].products
     },
     imgSpace () {
       var w = this.$parent.window > this.$parent.maxWidth ? this.$parent.maxWidth : this.$parent.window
@@ -61,6 +66,9 @@ export default {
     }
   },
   watch: {
+    color () {
+      this.$emit('color-change', this.color)
+    },
     productsFiltered () {
       this.setImgs()
     }
@@ -143,11 +151,16 @@ export default {
 }
 @media only screen and (max-width : $mobile-max-width) {
   #collections {
-    padding-top:204px;
+    padding-top:224px;
     padding-bottom:12px;
     > div {
       margin-bottom:36px;
     }
+  }
+}
+@media only screen and (min-width : $max-width) {
+  .product-title {
+    height: 44px;
   }
 }
 </style>
