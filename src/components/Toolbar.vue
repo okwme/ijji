@@ -35,6 +35,12 @@ export default {
 
   name: 'Toolbar',
 
+  mounted () {
+    this.$emit('color-change', this.color)
+  },
+  destroyed () {
+    this.$emit('color-change', null)
+  },
   computed: {
     colorStyle () {
       console.log(this.NavColor)
@@ -66,6 +72,11 @@ export default {
       } else {
         return 0
       }
+    }
+  },
+  watch: {
+    color () {
+      this.$emit('color-change', this.color)
     }
   },
   methods: {
