@@ -270,7 +270,6 @@ export default {
       return this.products.filter((p) => p.title.split('-')[0] === this.product.title.split('-')[0])
     },
     color () {
-      console.log(this.product)
       return this.product && this.product.tags && this.product.tags[0].value
     },
     tags () {
@@ -436,10 +435,10 @@ export default {
       }
     },
     isSelected (link) {
-      console.log(link, this.id, this.color)
-
-      return {
-        selected: link.id === this.id || link.handle === this.id || link.color[0].value === this.color
+      if (this.id && this.color) {
+        return {
+          selected: link.id === this.id || link.handle === this.id || link.color[0].value === this.color
+        }
       }
     }
   },
