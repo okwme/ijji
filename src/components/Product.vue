@@ -167,6 +167,7 @@ export default {
       }
     },
     product () {
+      console.log('product debug', this.product)
       if (this.product && !isNaN(this.id)) {
         this.$router.push('/product/' + this.product.handle)
       }
