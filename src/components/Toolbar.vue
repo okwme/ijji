@@ -2,27 +2,29 @@
   <div id='toolbar'>
     <div class='grid'>
       <div class='col-1-3 mob-1-1'>
-        <router-link to="/" id='index'><img id='logo' :src='logo'></router-link>
+        <router-link to="/" id='index'><img id='logo' src="../assets/Logo.svg"></router-link>
       </div>
       <div class='col-2-3 mob-1-1'>
-        <div class='collections'>
-          <router-link
-          :style='colorStyle'
-          data-text='All'
-          to="/collections/all">All</router-link>
-          <router-link
-          :style='colorStyle'
-          :data-text='$parent.collectionTitle(collection.title)'
-          :key='collection.title' 
-          v-for='collection in productCollections' 
-          :to="'/collections/' + $parent.collectionTitle(collection.title)"
-          v-html='$parent.collectionTitle(collection.title)'>
-          </router-link>
-          <a 
-          :style='colorStyle'
-          :data-text="'Cart ' + (items ? '(' + items + ')' : '')"
-          href='#' @click.prevent='clickCart'>Cart {{items ? '(' + items + ')' : ''}}</a>
-        </div>
+        <transition name="delay">
+          <div v-if="logoCollection" class='collections'>
+            <!-- <router-link
+            :style='colorStyle'
+            data-text='All'
+            to="/collections/all">All</router-link> -->
+            <router-link
+            :style='colorStyle'
+            :data-text='$parent.collectionTitle(collection.title)'
+            :key='collection.title' 
+            v-for='collection in productCollections' 
+            :to="'/collections/' + $parent.collectionTitle(collection.title)"
+            v-html='$parent.collectionTitle(collection.title)'>
+            </router-link>
+            <a 
+            :style='colorStyle'
+            :data-text="'Cart ' + (items ? '(' + items + ')' : '')"
+            href='#' @click.prevent='clickCart'>Cart {{items ? '(' + items + ')' : ''}}</a>
+          </div>
+        </transition>
       </div>
     </div>
   </div>
@@ -33,20 +35,21 @@ export default {
 
   name: 'Toolbar',
 
-  data () {
-    return {
-
-    }
-  },
   computed: {
     colorStyle () {
+      console.log(this.NavColor)
       return {
-        color: this.color
+        color: this.color || (this.$route.name === 'Home' && this.NavColor.description) || (this.$route.name === 'Collection' && '#111111')
       }
     },
     logoCollection () {
       return this.collections.filter((collection) => {
         return collection.title === 'Logo'
+      }).pop()
+    },
+    NavColor () {
+      return this.collections.filter((collection) => {
+        return collection.title === 'Nav Color'
       }).pop()
     },
     logo () {
@@ -102,7 +105,17 @@ export default {
 
 <style lang="scss" scoped>
   @import "../sass/vars";
-
+  .delay-display-none-leave-active {
+    transition: opacity;
+    transition-delay: 5000ms;
+    transition-duration: 0;
+  }
+  .delay-display-none-leave-to {
+      opacity: 1
+  }
+  #logo:hover {
+    filter: invert(1);
+  }
   #toolbar {
     position:absolute;
     width:100%;
@@ -128,7 +141,7 @@ export default {
         }
         &.router-link-active{
           background-color: $black;
-          color: white;
+          color: white !important;
         }
       }
       a::after {
@@ -165,22 +178,6 @@ export default {
             margin-right:0px;
           }
         }
-      }
-    }
-  }
-  @media only screen and (min-width : $max-width) {
-
-    #toolbar {
-      margin-top:0px;
-      .collections {
-        position: absolute;
-        top:48px;
-        right:20px;
-      }
-      #index {
-        position: absolute;
-        top:48px;
-        left:20px;
       }
     }
   }

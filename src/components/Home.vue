@@ -1,5 +1,7 @@
 <template>
+  <router-link to="/collections/all">
   <div id='home' :style='bg' :class="{loading: !imgLoaded}"></div>
+  </router-link>
 </template>
 
 <script>
@@ -59,13 +61,14 @@ export default {
   @import "../sass/vars";
 
   #home {
+    display: block;
     min-height:100vh;
     background-size: cover;
     background-position:center center;
-    background-repeat:no-repeat;
+    background-repeat: no-repeat;
     transition: opacity 500ms ease;
     &.loading {
-      opacity:0.5;
+      opacity: 0.5;
     }
   }
 @media only screen and (max-width : $tablet-max-width) {

@@ -36,7 +36,11 @@ body {
   letter-spacing: 1px;
 }
 table{
-  font-size: 10px;
+  font-size: 14px;
+  border: none !important; 
+  td {
+    border: none !important;
+  }
 }
 h1 {
   font-size: 36px;
