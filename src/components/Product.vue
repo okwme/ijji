@@ -269,6 +269,7 @@ export default {
       return this.products.filter((p) => p.title.split('-')[0] === this.product.title.split('-')[0])
     },
     color () {
+      console.log(this.product)
       return this.product && this.product.tags && this.product.tags[0].value
     },
     tags () {
