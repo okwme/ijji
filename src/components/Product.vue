@@ -167,7 +167,6 @@ export default {
       }
     },
     product () {
-      console.log('product debug', this.product)
       if (this.product && !isNaN(this.id)) {
         this.$router.push('/product/' + this.product.handle)
       }
@@ -259,6 +258,7 @@ export default {
       return this.inCart && this.inCart.quantity || this.staticQuantity
     },
     product () {
+      console.log('product debug', this.products)
       return this.products.filter((p) => {
         return p.id === this.id || p.handle === this.id
       }).pop()
@@ -435,10 +435,9 @@ export default {
       }
     },
     isSelected (link) {
-      if (this.id && this.color) {
-        return {
-          selected: link.id === this.id || link.handle === this.id || link.color[0].value === this.color
-        }
+      console.log(this.product, this.products)
+      return {
+        selected: link.id === this.id || link.handle === this.id || link.color[0].value === this.color
       }
     }
   },

@@ -96,6 +96,7 @@ export default {
       try {
         let products = await this.$client.product.fetchAll()
         this.products.push(...products)
+        console.log(products)
         this.checkoutId = localStorage.getItem('checkoutId')
         if (!this.checkoutId) {
           let checkout = await this.$client.checkout.create()
