@@ -43,7 +43,6 @@ export default {
   },
   computed: {
     colorStyle () {
-      console.log(this.NavColor)
       return {
         color: this.color || (this.$route.name === 'Home' && this.NavColor.description) || (this.$route.name === 'Collection' && '#111111')
       }
