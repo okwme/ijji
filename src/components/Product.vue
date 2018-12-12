@@ -272,22 +272,13 @@ export default {
       return this.product && this.product.tags && this.product.tags[0].value
     },
     tags () {
-      // return [this.colorcollection.map(product => {
-      //   return {
-      //     color: product.tags,
-      //     id: product.id,
-      //     handle: product.handle
-      //   }
-      // })]
-      return this.collection && this.collection.map((collection) => {
-        return collection.products && collection.products.map((product) => {
-          return {
-            color: product.tags,
-            id: product.id,
-            handle: product.handle
-          }
-        })
-      }).slice(0, 1)
+      return [this.colorcollection.map(product => {
+        return {
+          color: product.tags,
+          id: product.id,
+          handle: product.handle
+        }
+      })]
     },
     colorBorder () {
       return {
