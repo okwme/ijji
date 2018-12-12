@@ -42,7 +42,6 @@ export default {
   computed: {
     currCollection () {
       return this.collections.filter((c) => {
-        console.log(this.id, c)
         return this.$parent.collectionTitle(c.title) === this.id
       })
     },

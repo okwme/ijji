@@ -91,7 +91,7 @@
         @click.prevent='addToCart'
         v-html='buyText'></span>
       </div>
-      <div @click='measurements = 1' class='measurements-button' :style="{border: '2px solid ' + this.color, color: this.color + ' !important'}">Measurements</div>
+      <div @click='measurements = 1' v-if="showImage" class='measurements-button' :style="{border: '2px solid ' + this.color, color: this.color + ' !important'}">Measurements</div>
       <div class='text-div'>
         <!-- <div class='textChoices'>
           <span
@@ -236,7 +236,7 @@ export default {
     //   }
     // },
     showImage () {
-      return this.product.descriptionHtml.split('<table')[0].split('<img')[1] ? '<img' + this.product.descriptionHtml.split('<table')[0].split('<img')[1] : 'no measurements available'
+      return this.product.descriptionHtml.split('<table')[0].split('<img')[1] ? '<img' + this.product.descriptionHtml.split('<table')[0].split('<img')[1] : 0
     },
     showDescription () {
       return this.product && this.product.descriptionHtml.split('<table')[0].split('<img')[0]
