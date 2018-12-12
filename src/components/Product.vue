@@ -258,7 +258,6 @@ export default {
       return this.inCart && this.inCart.quantity || this.staticQuantity
     },
     product () {
-      console.log('product debug', this.products)
       return this.products.filter((p) => {
         return p.id === this.id || p.handle === this.id
       }).pop()
@@ -273,13 +272,22 @@ export default {
       return this.product && this.product.tags && this.product.tags[0].value
     },
     tags () {
-      return [this.colorcollection.map(product => {
-        return {
-          color: product.tags,
-          id: product.id,
-          handle: product.handle
-        }
-      })]
+      // return [this.colorcollection.map(product => {
+      //   return {
+      //     color: product.tags,
+      //     id: product.id,
+      //     handle: product.handle
+      //   }
+      // })]
+      return this.collection && this.collection.map((collection) => {
+        return collection.products && collection.products.map((product) => {
+          return {
+            color: product.tags,
+            id: product.id,
+            handle: product.handle
+          }
+        })
+      }).slice(0, 1)
     },
     colorBorder () {
       return {
@@ -435,7 +443,6 @@ export default {
       }
     },
     isSelected (link) {
-      console.log(this.product, this.products)
       return {
         selected: link.id === this.id || link.handle === this.id || link.color[0].value === this.color
       }
