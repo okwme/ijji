@@ -236,10 +236,10 @@ export default {
     //   }
     // },
     showImage () {
-      return this.product.descriptionHtml.split('<table')[0].split('<img')[1] ? '<img' + this.product.descriptionHtml.split('<table')[0].split('<img')[1] : 0
+      if (this.product.descriptionHtml) { return this.product.descriptionHtml.split('<table')[0].split('<img')[1] ? '<img' + this.product.descriptionHtml.split('<table')[0].split('<img')[1] : 0 } else { console.log('undaefined'); return '' }
     },
     showDescription () {
-      return this.product && this.product.descriptionHtml.split('<table')[0].split('<img')[0]
+      if (this.product.descriptionHtml) { return this.product && this.product.descriptionHtml.split('<table')[0].split('<img')[0] } else { console.log('unadefined'); return '' }
     },
     buyText () {
       return this.variant && (!this.variant.available ? 'email me when it\'s back' : (!this.inCart ? 'Add To Cart' : 'Remove From Cart'))
@@ -435,7 +435,7 @@ export default {
     },
     isSelected (link) {
       return {
-        selected: link.id === this.id || link.handle === this.id || link.color[0].value === this.color
+        selected: link.id === this.id || link.handle === this.id || (link.color && link.color[0].value === this.color)
       }
     }
   },

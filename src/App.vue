@@ -108,6 +108,7 @@ export default {
         this.collections.push(...collections)
       } catch (error) {
         console.log(error)
+        localStorage.removeItem('checkoutId')
         this.begin()
       }
     },
